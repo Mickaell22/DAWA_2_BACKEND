@@ -1,0 +1,14 @@
+.idea
+idea/
+**/__pycache__/
+__pycache__/
+*.pyc
+LOGS/
+credentials.json
+ws_secoed/src/utils/general/LOGS
+node_modules
+.venv
+environment_name
+.config.cfg
+config.cfg
+.env
