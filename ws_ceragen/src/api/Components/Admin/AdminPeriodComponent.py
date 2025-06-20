@@ -12,8 +12,8 @@ class Periodcomponent:
                     "per.state, per.user_created, to_char(per.date_created, 'DD/MM/YYYY HH24:MI:SS') as date_created, " \
                     "per.user_modified, to_char(per.date_modified, 'DD/MM/YYYY HH24:MI:SS') as date_modified, " \
                     "per.user_deleted, per.date_deleted " \
-                    "FROM secoed.admin_period per " \
-                    "INNER JOIN secoed.admin_cicle cic on cic.id = per.ciclo_id " \
+                    "FROM ceragen.admin_period per " \
+                    "INNER JOIN ceragen.admin_cicle cic on cic.id = per.ciclo_id " \
                     "where per.state = true;"
             res = DataBaseHandle.getRecords(query, 0)
             return res
@@ -27,7 +27,7 @@ class Periodcomponent:
             query = "SELECT id, name, description, anio, ciclo_id, is_active_period, state, " \
                     "user_created, to_char(date_created, 'DD/MM/YYYY HH24:MI:SS') as date_created, " \
                     "user_modified, date_modified, user_deleted, date_deleted " \
-                    "FROM secoed.admin_period where id = %s"
+                    "FROM ceragen.admin_period where id = %s"
             record = (id,)
             res = DataBaseHandle.getRecords(query, 1, record)
             return res
@@ -41,7 +41,7 @@ class Periodcomponent:
             v_message = None
             v_result = False
             v_data = None
-            sql = "INSERT INTO secoed.admin_period( name, description, anio, ciclo_id, " \
+            sql = "INSERT INTO ceragen.admin_period( name, description, anio, ciclo_id, " \
 	              "is_active_period, state, user_created, date_created) " \
 	              "VALUES (%s,%s,%s,%s,%s,%s,%s,%s) " \
                   "RETURNING id"
@@ -67,7 +67,7 @@ class Periodcomponent:
             v_result = False
             v_data = None
             HandleLogs.write_log((data_to_update))
-            sql = "UPDATE secoed.admin_period " \
+            sql = "UPDATE ceragen.admin_period " \
 	              "SET name=%s, description=%s, anio=%s, ciclo_id=%s," \
                   "user_modified=%s, date_modified=%s " \
 	              "WHERE id = %s"
@@ -91,7 +91,7 @@ class Periodcomponent:
     def DeletePeriod(id, p_user):
         try:
             print(p_user)
-            query = "UPDATE secoed.admin_period " \
+            query = "UPDATE ceragen.admin_period " \
                      "SET state = false, user_deleted = %s, date_deleted = %s WHERE id = %s"
             record = (p_user, datetime.now(), id)
             rows_affected = DataBaseHandle.ExecuteNonQuery(query, record)

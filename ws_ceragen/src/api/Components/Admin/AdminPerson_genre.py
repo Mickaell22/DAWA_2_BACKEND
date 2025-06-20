@@ -11,7 +11,7 @@ class Person_genre_Component:
             query = "select id, genre_name, state, user_created, " \
                     "to_char(date_created, 'DD/MM/YYYY HH24:MI:SS') as date_created, " \
                     "user_modified, to_char(date_modified, 'DD/MM/YYYY HH24:MI:SS') as date_modified, user_deleted, date_deleted " \
-                    "FROM secoed.admin_person_genre where state = true"
+                    "FROM ceragen.admin_person_genre where state = true"
             res = DataBaseHandle.getRecords(query, 0)
             return res
         except Exception as err:
@@ -24,7 +24,7 @@ class Person_genre_Component:
             query = "select id, genre_name, state, user_created, " \
                     "to_char(date_created, 'DD/MM/YYYY HH24:MI:SS') as date_created, " \
                     "user_modified, date_modified, user_deleted, date_deleted " \
-                    "FROM secoed.admin_person_genre where id = %s"
+                    "FROM ceragen.admin_person_genre where id = %s"
             record = (id,)
             res = DataBaseHandle.getRecords(query, 1, record)
             return res
@@ -38,7 +38,7 @@ class Person_genre_Component:
             v_message = None
             v_result = False
             v_data = None
-            sql = "INSERT INTO secoed.admin_person_genre( genre_name, state, " \
+            sql = "INSERT INTO ceragen.admin_person_genre( genre_name, state, " \
 	              "user_created, date_created) " \
 	              "VALUES (%s,%s,%s,%s) "
 
@@ -62,7 +62,7 @@ class Person_genre_Component:
             v_message = None
             v_result = False
             v_data = None
-            sql = "UPDATE secoed.admin_person_genre " \
+            sql = "UPDATE ceragen.admin_person_genre " \
 	              "SET genre_name=%s, user_modified=%s, date_modified=%s " \
                   "WHERE id = %s"
 
@@ -83,7 +83,7 @@ class Person_genre_Component:
     @staticmethod
     def DeletePersonGenre(id, p_user):
         try:
-            query = "UPDATE secoed.admin_person_genre " \
+            query = "UPDATE ceragen.admin_person_genre " \
                      "SET state = false, user_deleted = %s, date_deleted = %s WHERE id = %s"
             record = (p_user, datetime.now(), id)
             rows_affected = DataBaseHandle.ExecuteNonQuery(query, record)

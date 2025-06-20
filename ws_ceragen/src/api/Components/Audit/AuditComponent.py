@@ -20,11 +20,11 @@ class AuditComponent:
                         u.user_login_id AS user_name,
                         a.ser_date_event
                     FROM
-                        secoed.audi_sql_events_register a
+                        ceragen.audi_sql_events_register a
                     JOIN
-                        secoed.audi_tables t ON a.ser_table_id = t.aut_id
+                        ceragen.audi_tables t ON a.ser_table_id = t.aut_id
                     JOIN
-                        secoed.segu_user u ON a.ser_user_process_id = u.user_id;
+                        ceragen.segu_user u ON a.ser_user_process_id = u.user_id;
                     """
             answer = DataBaseHandle.getRecords(sql, 0)
 

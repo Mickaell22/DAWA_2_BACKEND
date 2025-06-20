@@ -10,7 +10,7 @@ class RolSistemComponent:
             result = False
             message = None
             data = None
-            sql = "SELECT rol_id, rol_name, rol_description FROM secoed.segu_rol  WHERE rol_state = TRUE "
+            sql = "SELECT rol_id, rol_name, rol_description FROM ceragen.segu_rol  WHERE rol_state = TRUE "
 
             resultado = DataBaseHandle.getRecords(sql, 0)
             HandleLogs.write_log(resultado)
@@ -41,7 +41,7 @@ class RolSistemComponent:
             result = False
             message = None
             data = None
-            sql = "UPDATE  secoed.segu_rol SET rol_state = false, user_deleted = %s, date_deleted= timezone('America/Guayaquil', now()) WHERE rol_id = %s"
+            sql = "UPDATE  ceragen.segu_rol SET rol_state = false, user_deleted = %s, date_deleted= timezone('America/Guayaquil', now()) WHERE rol_id = %s"
 
             resultado = DataBaseHandle.ExecuteNonQuery(sql, record)
             HandleLogs.write_log(resultado)
@@ -67,7 +67,7 @@ class RolSistemComponent:
              result = False
              message = None
              data = None
-             sql = """UPDATE secoed.segu_rol
+             sql = """UPDATE ceragen.segu_rol
                       SET rol_name = %s,rol_description=%s, user_modified = %s, date_modified = timezone('America/Guayaquil', now())
                       WHERE rol_id = %s"""
 
@@ -99,13 +99,13 @@ class RolSistemComponent:
              result = False
              message = None
              data = None
-             sql = """INSERT INTO secoed.segu_rol
+             sql = """INSERT INTO ceragen.segu_rol
                         ( rol_name, rol_description, rol_state, user_created, date_created)
 	                    SELECT
 	                    %s, %s, True, %s, timezone('America/Guayaquil', now())
 	                   WHERE NOT EXISTS (
                             SELECT 1
-                            FROM secoed.segu_rol 
+                            FROM ceragen.segu_rol 
                             WHERE rol_name = %s AND rol_state = true
                         ) 
 	                    RETURNING  rol_id;

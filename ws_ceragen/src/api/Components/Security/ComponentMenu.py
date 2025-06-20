@@ -19,9 +19,9 @@ class ComponentMenu:
                                    m.menu_href, 
                                    m.menu_url, 
                                    m.menu_key
-                            FROM secoed.segu_menu m
-                            LEFT JOIN secoed.segu_menu p ON m.menu_parent_id = p.menu_id
-                            LEFT JOIN secoed.segu_module mm ON m.menu_module_id = mm.mod_id
+                            FROM ceragen.segu_menu m
+                            LEFT JOIN ceragen.segu_menu p ON m.menu_parent_id = p.menu_id
+                            LEFT JOIN ceragen.segu_module mm ON m.menu_module_id = mm.mod_id
                             WHERE m.menu_state = true
                             ORDER BY m.menu_order;"""
 
@@ -58,7 +58,7 @@ class ComponentMenu:
             result = False
             message = None
             data = None
-            sql = "UPDATE secoed.segu_menu SET menu_state = false, user_deleted = %s, date_deleted= timezone('America/Guayaquil', now()) WHERE menu_id = %s"
+            sql = "UPDATE ceragen.segu_menu SET menu_state = false, user_deleted = %s, date_deleted= timezone('America/Guayaquil', now()) WHERE menu_id = %s"
 
             resultado = DataBaseHandle.ExecuteNonQuery(sql,record)
             HandleLogs.write_log("delete")
@@ -87,7 +87,7 @@ class ComponentMenu:
              result = False
              message = None
              data = None
-             sql = """UPDATE secoed.segu_menu
+             sql = """UPDATE ceragen.segu_menu
                       SET menu_name = %s, menu_order = %s, menu_module_id = %s, menu_parent_id = %s, menu_icon_name = %s, menu_href = %s, menu_url = %s, menu_key = %s , user_modified = %s, date_modified = timezone('America/Guayaquil', now())
                       WHERE menu_id = %s"""
              resultado = DataBaseHandle.ExecuteNonQuery(sql, record)
@@ -119,11 +119,11 @@ class ComponentMenu:
             result = False
             message = None
             data = None
-            sql = """INSERT INTO secoed.segu_menu( menu_name, menu_order, menu_module_id, menu_parent_id, menu_icon_name, menu_href, menu_url, menu_key, menu_state, user_created, date_created) 
+            sql = """INSERT INTO ceragen.segu_menu( menu_name, menu_order, menu_module_id, menu_parent_id, menu_icon_name, menu_href, menu_url, menu_key, menu_state, user_created, date_created) 
                       SELECT %s, %s, %s, %s, %s,%s,%s, %s, true, %s, timezone('America/Guayaquil', now())
                       WHERE NOT EXISTS (
                             SELECT 1
-                            FROM secoed.segu_menu 
+                            FROM ceragen.segu_menu 
                             WHERE menu_name = %s AND menu_state = true 
                         )
                         RETURNING menu_id"""

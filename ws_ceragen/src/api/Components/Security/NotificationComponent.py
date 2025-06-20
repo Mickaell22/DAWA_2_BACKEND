@@ -19,13 +19,13 @@ class NotificationComponent:
                         su_dest.user_login_id AS recipient_login_id,
                         su_source.user_login_id AS sender_login_id   
                     FROM 
-                        secoed.segu_user_notification s
+                        ceragen.segu_user_notification s
                     JOIN 
-                        secoed.segu_user su_dest
+                        ceragen.segu_user su_dest
                     ON 
                         s.sun_user_destination_id = su_dest.user_id
                     JOIN 
-                        secoed.segu_user su_source
+                        ceragen.segu_user su_source
                     ON 
                         s.sun_user_source_id = su_source.user_id
                     WHERE 
@@ -70,7 +70,7 @@ class NotificationComponent:
             result = False
             message = None
             data = None
-            sql = """UPDATE secoed.segu_user_notification
+            sql = """UPDATE ceragen.segu_user_notification
             SET  sun_isread_notification = %s, sun_date_read_notification=timezone('America/Guayaquil', now()), user_modified=%s, date_modified=timezone('America/Guayaquil', now())
             WHERE sun_id = %s;"""
 
@@ -102,7 +102,7 @@ class NotificationComponent:
             result = False
             message = None
             data = None
-            sql = """UPDATE secoed.segu_user_notification
+            sql = """UPDATE ceragen.segu_user_notification
             SET  sun_state_notification = true, user_deleted=%s, date_deleted=timezone('America/Guayaquil', now())
             WHERE sun_id = %s;"""
 

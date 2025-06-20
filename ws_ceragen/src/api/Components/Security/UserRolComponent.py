@@ -16,11 +16,11 @@ class UserRolComponent:
                         ur.id_user,
                         ur.id_rol
                     FROM 
-                        secoed.segu_user_rol ur
+                        ceragen.segu_user_rol ur
                     JOIN 
-                        secoed.segu_user u ON ur.id_user = u.user_id
+                        ceragen.segu_user u ON ur.id_user = u.user_id
                     JOIN 
-                        secoed.segu_rol r ON ur.id_rol = r.rol_id
+                        ceragen.segu_rol r ON ur.id_rol = r.rol_id
                     WHERE 
                         ur.state = true AND 
                         u.user_state= true AND 
@@ -56,7 +56,7 @@ class UserRolComponent:
             result = False
             message = None
             data = None
-            sql = "UPDATE secoed.segu_user_rol SET state = false, user_deleted = %s, date_deleted= timezone('America/Guayaquil', now()) WHERE id_user_rol = %s"
+            sql = "UPDATE ceragen.segu_user_rol SET state = false, user_deleted = %s, date_deleted= timezone('America/Guayaquil', now()) WHERE id_user_rol = %s"
 
             resultado = DataBaseHandle.ExecuteNonQuery(sql, record)
             HandleLogs.write_log(resultado)
@@ -81,10 +81,10 @@ class UserRolComponent:
             result = False
             message = None
             data = None
-            sql = """UPDATE secoed.segu_user_rol
+            sql = """UPDATE ceragen.segu_user_rol
                       SET id_user = %s, id_rol = %s,  user_modified = %s, date_modified = timezone('America/Guayaquil', now())
                       WHERE id_user_rol = %s AND NOT EXISTS 
-                      (SELECT 1 FROM secoed.segu_menu_rol
+                      (SELECT 1 FROM ceragen.segu_menu_rol
                             WHERE id_user = %s AND id_rol = %s AND state = true
                         );"""
 
@@ -113,12 +113,12 @@ class UserRolComponent:
             result = False
             message = None
             data = None
-            sql = """INSERT INTO secoed.segu_user_rol(
+            sql = """INSERT INTO ceragen.segu_user_rol(
                      id_user, id_rol, user_created, date_created,state)
                     SELECT %s,  %s,  %s,  timezone('America/Guayaquil', now()), true
                      WHERE NOT EXISTS (
                             SELECT 1
-                            FROM secoed.segu_user_rol 
+                            FROM ceragen.segu_user_rol 
                             WHERE id_user = %s AND  id_rol = %s AND state = true
                         )
                     RETURNING id_user_rol"""

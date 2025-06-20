@@ -16,13 +16,13 @@ class MenuRolComponent:
                     sr.rol_id AS rol_id,
                     sr.rol_name AS rol_name
                 FROM
-                    secoed.segu_menu_rol smr
+                    ceragen.segu_menu_rol smr
                 JOIN
-                    secoed.segu_menu sm
+                    ceragen.segu_menu sm
                 ON
                     smr.mr_menu_id = sm.menu_id
                 JOIN
-                    secoed.segu_rol sr
+                    ceragen.segu_rol sr
                 ON
                     smr.mr_rol_id = sr.rol_id
                 WHERE
@@ -60,7 +60,7 @@ class MenuRolComponent:
             result = False
             message = None
             data = None
-            sql = "UPDATE  secoed.segu_menu_rol SET mr_state = false, user_deleted = %s, date_deleted= timezone('America/Guayaquil', now()) WHERE mr_id = %s"
+            sql = "UPDATE  ceragen.segu_menu_rol SET mr_state = false, user_deleted = %s, date_deleted= timezone('America/Guayaquil', now()) WHERE mr_id = %s"
 
             resultado = DataBaseHandle.ExecuteNonQuery(sql, record)
             HandleLogs.write_log(resultado)
@@ -86,10 +86,10 @@ class MenuRolComponent:
              result = False
              message = None
              data = None
-             sql = """UPDATE secoed.segu_menu_rol
+             sql = """UPDATE ceragen.segu_menu_rol
                          SET mr_menu_id = %s,mr_rol_id=%s, user_modified = %s, date_modified = timezone('America/Guayaquil', now())
                         WHERE mr_id = %s AND NOT EXISTS (SELECT 1
-                        FROM secoed.segu_menu_rol
+                        FROM ceragen.segu_menu_rol
                         WHERE mr_menu_id = %s
                           AND mr_rol_id = %s
                           );"""
@@ -122,12 +122,12 @@ class MenuRolComponent:
              result = False
              message = None
              data = None
-             sql = """INSERT INTO secoed.segu_menu_rol
+             sql = """INSERT INTO ceragen.segu_menu_rol
                         ( mr_menu_id, mr_rol_id, mr_state, user_created, date_created)
 	                    SELECT %s, %s, True, %s, timezone('America/Guayaquil', now())
 	                    WHERE NOT EXISTS (
                             SELECT 1
-                            FROM secoed.segu_menu_rol 
+                            FROM ceragen.segu_menu_rol 
                             WHERE mr_menu_id = %s AND mr_rol_id=%s AND mr_state = true
                         )
 	                    RETURNING mr_id;"""

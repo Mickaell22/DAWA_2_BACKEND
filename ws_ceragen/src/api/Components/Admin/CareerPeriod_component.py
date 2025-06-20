@@ -13,9 +13,9 @@ class CareerPeriodComponent:
             query = "SELECT cpe.ucp_id, per.name AS period_name, car.name AS career_name, cpe.ucp_state, cpe.user_created, " \
                     "to_char(cpe.date_created, 'DD/MM/YYYY HH24:MI:SS') AS date_created, cpe.user_modified, " \
                     "to_char(cpe.date_modified, 'DD/MM/YYYY HH24:MI:SS') AS date_modified, cpe.user_deleted, cpe.date_deleted " \
-                    "FROM secoed.admin_career_period cpe " \
-                    "INNER JOIN secoed.admin_period per ON per.id = cpe.ucp_id_period " \
-                    "INNER JOIN secoed.admin_university_career car ON car.id = cpe.ucp_id_career " \
+                    "FROM ceragen.admin_career_period cpe " \
+                    "INNER JOIN ceragen.admin_period per ON per.id = cpe.ucp_id_period " \
+                    "INNER JOIN ceragen.admin_university_career car ON car.id = cpe.ucp_id_career " \
                     "WHERE cpe.ucp_state = True"
 
             res = DataBaseHandle.getRecords(query, 0) 
@@ -30,7 +30,7 @@ class CareerPeriodComponent:
             query = "SELECT ucp_id, ucp_id_period, ucp_id_career, ucp_state, user_created, " \
                     "to_char(date_created, 'DD/MM/YYYY HH24:MI:SS') AS date_created, user_modified, " \
                     "to_char(date_modified, 'DD/MM/YYYY HH24:MI:SS') AS date_modified, user_deleted, date_deleted " \
-                    "FROM secoed.admin_career_period WHERE ucp_id = %s"
+                    "FROM ceragen.admin_career_period WHERE ucp_id = %s"
             record = (ucp_id,)
             result = DataBaseHandle.getRecords(query, 1, record)
 
@@ -46,7 +46,7 @@ class CareerPeriodComponent:
             v_message = None
             v_result = False
             v_data = None
-            sql = "INSERT INTO secoed.admin_career_period( ucp_id_period, ucp_id_career, " \
+            sql = "INSERT INTO ceragen.admin_career_period( ucp_id_period, ucp_id_career, " \
 	              "ucp_state, user_created, date_created) " \
 	              "VALUES (%s,%s,%s,%s,%s) "
 
@@ -70,7 +70,7 @@ class CareerPeriodComponent:
             v_message = None
             v_result = False
             v_data = None
-            sql = "UPDATE secoed.admin_career_period " \
+            sql = "UPDATE ceragen.admin_career_period " \
                   "SET ucp_id_period=%s, ucp_id_career=%s, " \
                   "user_modified=%s, date_modified=%s " \
                   "WHERE ucp_id = %s"
@@ -92,7 +92,7 @@ class CareerPeriodComponent:
     @staticmethod
     def delete_admin_period(ucp_id, p_user):
         try:
-            query = "UPDATE secoed.admin_career_period " \
+            query = "UPDATE ceragen.admin_career_period " \
                      "SET ucp_state = false, user_deleted = %s, date_deleted = %s WHERE ucp_id = %s"
             record = (p_user, datetime.now(), ucp_id)
             rows_affected = DataBaseHandle.ExecuteNonQuery(query, record)
