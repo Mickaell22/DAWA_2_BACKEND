@@ -10,7 +10,7 @@ class AdminiesComponent:
             query = "select id, name, description, phone_number, address, manager_name, web_site, " \
                     "mail_address, state, user_created, to_char(date_created, 'DD/MM/YYYY HH24:MI:SS') as date_created, " \
                     "user_modified, to_char(date_modified, 'DD/MM/YYYY HH24:MI:SS') AS date_modified, user_deleted, date_deleted " \
-                    "from secoed.admin_ies where state = true"
+                    "from ceragen.admin_ies where state = true"
             res = DataBaseHandle.getRecords(query, 0)
             return res
         except Exception as err:
@@ -23,7 +23,7 @@ class AdminiesComponent:
             query = "select id, name, description, phone_number, address, manager_name, web_site, " \
                     "mail_address, state, user_created, to_char(date_created, 'DD/MM/YYYY HH24:MI:SS') as date_created, " \
                     "user_modified, to_char(date_modified, 'DD/MM/YYYY HH24:MI:SS') AS date_modified, user_deleted, date_deleted " \
-                    "from secoed.admin_ies where id = %s"
+                    "from ceragen.admin_ies where id = %s"
             record = (id,)
             res = DataBaseHandle.getRecords(query, 1, record)
             return res
@@ -38,7 +38,7 @@ class AdminiesComponent:
             v_message = None
             v_result = False
             v_data = None
-            sql = "INSERT INTO secoed.admin_ies( name, description, phone_number, address, " \
+            sql = "INSERT INTO ceragen.admin_ies( name, description, phone_number, address, " \
                   "manager_name, web_site, mail_address, state, user_created, date_created) " \
                   "VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) "
 
@@ -64,7 +64,7 @@ class AdminiesComponent:
             v_message = None
             v_result = False
             v_data = None
-            sql = "UPDATE secoed.admin_ies " \
+            sql = "UPDATE ceragen.admin_ies " \
                   "SET name=%s, description=%s, phone_number=%s, " \
                   "address=%s, manager_name=%s, web_site=%s, mail_address=%s, " \
                   "user_modified=%s, date_modified=%s " \
@@ -90,7 +90,7 @@ class AdminiesComponent:
     def delete_Ies(id, p_user):
         try:
             #validas que no existan unidades academicas asociadas
-            query1 = "SELECT count(*) as total FROM secoed.admin_unit_academic " \
+            query1 = "SELECT count(*) as total FROM ceragen.admin_unit_academic " \
             "where id_ies = %s and state = true;"
 
             record1 = (id,)
@@ -101,7 +101,7 @@ class AdminiesComponent:
                     return False, "No se puede eliminar el registro porque existen Carreras Universitarias asociadas"
                 else:
 
-                    query = "UPDATE secoed.admin_ies " \
+                    query = "UPDATE ceragen.admin_ies " \
                         "SET state = false, user_deleted = %s, date_deleted = %s WHERE id = %s"
                 record = (p_user, datetime.now(), id)
                 rows_affected = DataBaseHandle.ExecuteNonQuery(query, record)

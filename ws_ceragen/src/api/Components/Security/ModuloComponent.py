@@ -9,7 +9,7 @@ class ModuleComponent:
             result = False
             message = None
             data = None
-            sql ="SELECT mod_id, mod_name, mod_description, mod_order, mod_icon_name, mod_text_name FROM secoed.segu_module WHERE mod_state = true"
+            sql ="SELECT mod_id, mod_name, mod_description, mod_order, mod_icon_name, mod_text_name FROM ceragen.segu_module WHERE mod_state = true"
 
             resultado = DataBaseHandle.getRecords(sql, 0)
 
@@ -40,7 +40,7 @@ class ModuleComponent:
             result = False
             message = None
             data = None
-            sql ="UPDATE secoed.segu_module SET mod_state = false, user_deleted = %s, date_deleted= timezone('America/Guayaquil', now()) WHERE mod_id = %s"
+            sql ="UPDATE ceragen.segu_module SET mod_state = false, user_deleted = %s, date_deleted= timezone('America/Guayaquil', now()) WHERE mod_id = %s"
             HandleLogs.write_log(type(id))
 
             resultado = DataBaseHandle.ExecuteNonQuery(sql,record)
@@ -67,7 +67,7 @@ class ModuleComponent:
             result = False
             message = None
             data = None
-            sql = """UPDATE secoed.segu_module
+            sql = """UPDATE ceragen.segu_module
                         SET  mod_name=%s, mod_description=%s, mod_order=%s, mod_icon_name=%s, mod_text_name= %s , user_modified=%s, date_modified= timezone('America/Guayaquil', now())
                         WHERE mod_id = %s"""
             resultado = DataBaseHandle.ExecuteNonQuery(sql,record)
@@ -97,14 +97,14 @@ class ModuleComponent:
             result = False
             message = None
             data = None
-            sql = """INSERT INTO secoed.segu_module (
+            sql = """INSERT INTO ceragen.segu_module (
                             mod_name, mod_description, mod_order, mod_icon_name, mod_text_name, mod_state, user_created, date_created
                         ) 
                         SELECT
                             %s, %s, %s, %s, %s, True, %s, timezone('America/Guayaquil', now())
                         WHERE NOT EXISTS (
                             SELECT 1
-                            FROM secoed.segu_module 
+                            FROM ceragen.segu_module 
                             WHERE mod_name = %s AND mod_state = true
                         )
                          RETURNING mod_id;"""

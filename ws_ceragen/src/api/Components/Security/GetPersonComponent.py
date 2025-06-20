@@ -26,9 +26,9 @@ class GetPersonComponent:
     u.user_state,
     u.user_last_login
 FROM
-    secoed.admin_person p
+    ceragen.admin_person p
 LEFT JOIN
-    secoed.segu_user u
+    ceragen.segu_user u
     ON p.per_id = u.user_person_id
 WHERE
     p.per_state = true 

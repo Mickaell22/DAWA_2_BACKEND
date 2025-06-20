@@ -9,9 +9,9 @@ class LoginDataComponent:
             result = False
             message = None
             data = None
-            sql = """INSERT INTO secoed.segu_login ( slo_user_id, slo_token, slo_origin_ip, slo_host_name, slo_date_start_connection )
+            sql = """INSERT INTO ceragen.segu_login ( slo_user_id, slo_token, slo_origin_ip, slo_host_name, slo_date_start_connection )
                       VALUES (
-                            (SELECT user_id FROM secoed.segu_user WHERE user_login_id = %s), %s, %s, %s, timezone('America/Guayaquil', now())
+                            (SELECT user_id FROM ceragen.segu_user WHERE user_login_id = %s), %s, %s, %s, timezone('America/Guayaquil', now())
                             ) RETURNING  slo_id"""
             record = (user_id, token, origen_ip, host)
             resultado = DataBaseHandle.ExecuteInsert(sql,record)

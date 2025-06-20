@@ -15,7 +15,7 @@ class UserComponent:
             result = False
             message = None
             data = None
-            sql = "SELECT user_id,user_person_id,user_login_id,user_mail FROM secoed.segu_user WHERE user_state = true;"
+            sql = "SELECT user_id,user_person_id,user_login_id,user_mail FROM ceragen.segu_user WHERE user_state = true;"
 
             resultado = DataBaseHandle.getRecords(sql, 0)
             HandleLogs.write_log(resultado)
@@ -50,8 +50,8 @@ class UserComponent:
                 message = None
                 data = None
                 sql = "select us.user_id, us.user_login_id,us.user_mail , per_names, per_surnames, user_locked, user_last_login " \
-                      "from secoed.segu_user us " \
-                      "inner join secoed.admin_person pe on us.user_person_id = pe.per_id " \
+                      "from ceragen.segu_user us " \
+                      "inner join ceragen.admin_person pe on us.user_person_id = pe.per_id " \
                       "where user_login_id = %s " \
                       "and user_state = true and user_locked = false;"
                 record = (user_token,)
@@ -115,7 +115,7 @@ class UserComponent:
 
             data = None
             sql = """ 
-                    INSERT INTO secoed.segu_user(
+                    INSERT INTO ceragen.segu_user(
                     user_person_id, user_login_id, user_mail, user_password, user_created, date_created,login_attempts)
                     VALUES (%s, %s,%s, %s, %s, timezone('America/Guayaquil', now()),0)
                     ON CONFLICT (user_login_id)
@@ -154,7 +154,7 @@ class UserComponent:
             result = False
             message = None
             data = None
-            sql = """UPDATE  secoed.segu_user SET user_state=False, user_deleted=%s, date_deleted=timezone('America/Guayaquil', now()) WHERE user_id = %s;"""
+            sql = """UPDATE  ceragen.segu_user SET user_state=False, user_deleted=%s, date_deleted=timezone('America/Guayaquil', now()) WHERE user_id = %s;"""
             answer = DataBaseHandle.ExecuteNonQuery(sql, record)
             HandleLogs.write_log(answer)
             if answer['result'] is True:
@@ -180,7 +180,7 @@ class UserComponent:
             result = False
             message = None
             data = None
-            sql = """UPDATE secoed.segu_user
+            sql = """UPDATE ceragen.segu_user
                         SET 
                             user_locked = CASE WHEN user_locked = FALSE THEN TRUE ELSE FALSE  END,
                             login_attempts = CASE WHEN user_locked = FALSE THEN 3 ELSE 0 END,
@@ -210,7 +210,7 @@ class UserComponent:
             result = False
             message = None
             data = None
-            sql = "UPDATE secoed.segu_user SET user_last_login = timezone('America/Guayaquil', now() ), login_attempts =  0 WHERE user_login_id = %s"
+            sql = "UPDATE ceragen.segu_user SET user_last_login = timezone('America/Guayaquil', now() ), login_attempts =  0 WHERE user_login_id = %s"
             record = (user_id,)
             answer = DataBaseHandle.ExecuteNonQuery(sql, record)
             HandleLogs.write_log(answer)
@@ -239,7 +239,7 @@ class UserComponent:
             result = False
             message = None
             data = None
-            sql = """UPDATE secoed.segu_user
+            sql = """UPDATE ceragen.segu_user
                     SET user_password=%s,  user_modified=%s, date_modified=timezone('America/Guayaquil', now())
                     WHERE user_id = %s AND user_password = %s AND user_locked=false AND user_state=true;
                                           """
@@ -270,7 +270,7 @@ class UserComponent:
             data = None
             record = (email,)
             sql = """ SELECT user_login_id
-                        FROM secoed.segu_user
+                        FROM ceragen.segu_user
                         WHERE user_mail = %s;
                         """
             answer = DataBaseHandle.getRecords(sql,1,record)
@@ -305,7 +305,7 @@ class UserComponent:
             result = False
             message = None
             data = None
-            sql = """UPDATE secoed.segu_user
+            sql = """UPDATE ceragen.segu_user
                         SET 
                             user_password = %s,
                             user_modified =  %s,

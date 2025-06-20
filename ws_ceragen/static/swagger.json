@@ -7516,12 +7516,7 @@
          "login_password": {
            "type": "string",
            "format": "string",
-           "example": "21232f297a57a5a743894a0e4a801fc3"
-         },
-         "ip_address": {
-           "type": "string",
-           "format": "string",
-           "example": "192.168.3.2"
+           "example": "admin"
          },
          "host_name": {
            "type": "string",

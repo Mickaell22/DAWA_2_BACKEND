@@ -15,9 +15,9 @@ class AdminPersonComponent:
                     pers.per_state, pers.user_created, to_char(pers.date_created, 'DD/MM/YYYY HH24:MI:SS') as date_created,
                     pers.user_modified, to_char(pers.date_modified, 'DD/MM/YYYY HH24:MI:SS') as date_modified, pers.user_deleted, pers.date_deleted,
                     pergen.genre_name as genre_name, mastatus.status_name as name_marital_status
-            FROM secoed.admin_person pers
-            INNER JOIN secoed.admin_person_genre pergen on pergen.id = pers.per_genre_id
-            INNER JOIN secoed.admin_marital_status mastatus on mastatus.id = pers.per_marital_status_id
+            FROM ceragen.admin_person pers
+            INNER JOIN ceragen.admin_person_genre pergen on pergen.id = pers.per_genre_id
+            INNER JOIN ceragen.admin_marital_status mastatus on mastatus.id = pers.per_marital_status_id
             WHERE pers.per_state= True
             """
             result = DataBaseHandle.getRecords(query, 0)
@@ -33,7 +33,7 @@ class AdminPersonComponent:
                     "per_country, per_city, per_address, per_phone, per_mail, to_char(per_birth_date, 'DD/MM/YYYY HH24:MI:SS') as per_birth_date, "\
                     "per_state, user_created, to_char(date_created, 'DD/MM/YYYY HH24:MI:SS') as date_created, user_modified, date_modified, "\
                     "user_deleted, date_deleted "\
-                    "FROM secoed.admin_person WHERE per_id = %s"
+                    "FROM ceragen.admin_person WHERE per_id = %s"
             record = (per_id,)
             result = DataBaseHandle.getRecords(query, 1, record)
             DataBaseHandle.getRecords(query, 1, record)
@@ -48,7 +48,7 @@ class AdminPersonComponent:
                 v_message = None
                 v_result = False
                 v_data = None
-                sql = "INSERT INTO secoed.admin_person(per_identification, per_names, per_surnames, per_genre_id, " \
+                sql = "INSERT INTO ceragen.admin_person(per_identification, per_names, per_surnames, per_genre_id, " \
                       "per_marital_status_id, per_country, per_city, per_address, per_phone, per_mail, per_birth_date, " \
                       "per_state, user_created, date_created) " \
                       "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
@@ -78,7 +78,7 @@ class AdminPersonComponent:
             v_result = False
             v_data = None
             HandleLogs.write_log(data_to_update['per_city'])
-            sql = "UPDATE secoed.admin_person " \
+            sql = "UPDATE ceragen.admin_person " \
                   "SET per_identification=%s, per_names=%s, per_surnames=%s, per_genre_id=%s, " \
                   "per_marital_status_id=%s, per_country=%s, per_city=%s, per_address=%s, " \
                   "per_phone=%s, per_mail=%s, per_birth_date=%s, " \
@@ -105,7 +105,7 @@ class AdminPersonComponent:
     @staticmethod
     def delete_admin_person(per_id, p_user):
         try:
-            query = "UPDATE secoed.admin_person " \
+            query = "UPDATE ceragen.admin_person " \
                      "SET per_state = false, user_deleted = %s, date_deleted = %s WHERE per_id = %s"
             record = (p_user, datetime.now(), per_id)
             rows_affected = DataBaseHandle.ExecuteNonQuery(query, record)

@@ -27,7 +27,10 @@ class LoginService(Resource):
                 return response_error("Error al Validar el Request -> " + str(error))
             #LLamar al metodo del componente
             HandleLogs.write_log("metodo del componente")
+            HandleLogs.write_log(f"Llamando Login con user: {rq_json['login_user']}")
             resultado = LoginComponent.Login(rq_json['login_user'], rq_json['login_password'])
+            HandleLogs.write_log(f"Resultado completo del login: {resultado}")
+            HandleLogs.write_log(f"Result: {resultado['result']}, Message: {resultado['message']}")
             #HandleLogs.write_log(resultado)
             if resultado['result']:
                 #Generamos el Token de Respuesta
@@ -51,4 +54,3 @@ class LoginService(Resource):
         except Exception as err:
             HandleLogs.write_error(err)
             return response_error(err.__str__())
-

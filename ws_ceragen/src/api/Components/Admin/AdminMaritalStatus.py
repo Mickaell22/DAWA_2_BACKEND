@@ -11,7 +11,7 @@ class MaritalStatuscomponent:
                     "to_char(date_created, 'DD/MM/YYYY HH24:MI:SS') as date_created, " \
                     "user_modified, to_char(date_modified, 'DD/MM/YYYY HH24:MI:SS') as date_modified, " \
                     "user_deleted, date_deleted " \
-                    "FROM secoed.admin_marital_status where state = true"
+                    "FROM ceragen.admin_marital_status where state = true"
             res = DataBaseHandle.getRecords(query, 0)
             return res
         except Exception as err:
@@ -24,7 +24,7 @@ class MaritalStatuscomponent:
             query = "select id, status_name, state, user_created, " \
                     "to_char(date_created, 'DD/MM/YYYY HH24:MI:SS') as date_created, " \
                     "user_modified, date_modified, user_deleted, date_deleted " \
-                    "FROM secoed.admin_marital_status where id = %s"
+                    "FROM ceragen.admin_marital_status where id = %s"
             record = (id,)
             res = DataBaseHandle.getRecords(query, 1, record)
             return res
@@ -39,7 +39,7 @@ class MaritalStatuscomponent:
             v_message = None
             v_result = False
             v_data = None
-            sql = "INSERT INTO secoed.admin_marital_status( status_name, " \
+            sql = "INSERT INTO ceragen.admin_marital_status( status_name, " \
                   "state, user_created, date_created) " \
                   "VALUES (%s,%s,%s,%s) "
 
@@ -63,7 +63,7 @@ class MaritalStatuscomponent:
             v_message = None
             v_result = False
             v_data = None
-            sql = "UPDATE secoed.admin_marital_status " \
+            sql = "UPDATE ceragen.admin_marital_status " \
 	              "SET status_name=%s, " \
                   "user_modified=%s, date_modified=%s " \
 	              "WHERE id = %s"
@@ -86,7 +86,7 @@ class MaritalStatuscomponent:
     @staticmethod
     def DeleteMaritalStatus(id, p_user):
         try:
-            query = "UPDATE secoed.admin_marital_status " \
+            query = "UPDATE ceragen.admin_marital_status " \
                      "SET state = false, user_deleted = %s, date_deleted = %s WHERE id = %s"
             record = (p_user, datetime.now(), id)
             rows_affected = DataBaseHandle.ExecuteNonQuery(query, record)

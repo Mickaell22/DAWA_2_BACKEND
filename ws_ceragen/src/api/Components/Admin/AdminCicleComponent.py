@@ -10,7 +10,7 @@ class AdminCicleComponent:
                     "to_char(date_created, 'DD/MM/YYYY HH24:MI:SS') as date_created, " \
                     "user_modified, to_char(date_modified, 'DD/MM/YYYY HH24:MI:SS') AS date_modified, " \
                     "user_deleted, to_char(date_deleted, 'DD/MM/YYYY HH24:MI:SS') AS date_deleted " \
-                    "from secoed.admin_cicle where state = true"
+                    "from ceragen.admin_cicle where state = true"
             result = DataBaseHandle.getRecords(query, 0)
             return result # Devuelve una lista de objetos de ciclos
         except Exception as err:
@@ -24,7 +24,7 @@ class AdminCicleComponent:
                     "to_char(date_created, 'DD/MM/YYYY HH24:MI:SS') as date_created, " \
                     "user_modified, to_char(date_modified, 'DD/MM/YYYY HH24:MI:SS') AS date_modified, " \
                     "user_deleted, date_deleted " \
-                    "from secoed.admin_cicle where id = %s and state = true"
+                    "from ceragen.admin_cicle where id = %s and state = true"
             record = (id,)
             result = DataBaseHandle.getRecords(query, 1, record)
             return result
@@ -39,7 +39,7 @@ class AdminCicleComponent:
             v_message = None
             v_result = False
             v_data = None
-            sql = "INSERT INTO secoed.admin_cicle(value, state, user_created, date_created) " \
+            sql = "INSERT INTO ceragen.admin_cicle(value, state, user_created, date_created) " \
                   "VALUES (%s, %s, %s, %s)"
 
             record = (data_to_insert['value'], True,
@@ -62,7 +62,7 @@ class AdminCicleComponent:
             v_message = None
             v_result = False
             v_data = None
-            sql = "UPDATE secoed.admin_cicle " \
+            sql = "UPDATE ceragen.admin_cicle " \
                   "SET value=%s, state=%s, " \
                   "user_modified=%s, date_modified=%s " \
                   "WHERE id = %s"
@@ -83,7 +83,7 @@ class AdminCicleComponent:
     @staticmethod
     def delete_admin_cicle(id, p_user):
         try:
-            query = "UPDATE secoed.admin_cicle " \
+            query = "UPDATE ceragen.admin_cicle " \
                      "SET state = false, user_deleted = %s, date_deleted = %s WHERE id = %s"
             record = (p_user, datetime.now(), id)
             rows_affected = DataBaseHandle.ExecuteNonQuery(query, record)

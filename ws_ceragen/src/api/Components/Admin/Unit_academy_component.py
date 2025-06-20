@@ -13,8 +13,8 @@ class Unit_academy_component:
                     "unit.mail_address, unit.state, unit.user_created, to_char(unit.date_created, 'DD/MM/YYYY HH24:MI:SS') as date_created, " \
                     "unit.user_modified, to_char(unit.date_modified, 'DD/MM/YYYY HH24:MI:SS') AS date_modified, unit.user_deleted, unit.date_deleted, " \
                     "Ies.name as name_ies " \
-                    "FROM secoed.admin_academy_unit unit " \
-                    "INNER JOIN secoed.admin_ies Ies on Ies.id = unit.id_ies " \
+                    "FROM ceragen.admin_academy_unit unit " \
+                    "INNER JOIN ceragen.admin_ies Ies on Ies.id = unit.id_ies " \
                     "where unit.state = true"
             res = DataBaseHandle.getRecords(query, 0)
             return res
@@ -29,7 +29,7 @@ class Unit_academy_component:
             query = "select id, name, id_ies, description, phone_number, address, manager_name, web_site, " \
                     "mail_address, state, user_created, to_char(date_created, 'DD/MM/YYYY HH24:MI:SS') as date_created, " \
                     "user_modified, to_char(date_modified, 'DD/MM/YYYY HH24:MI:SS') AS date_modified, user_deleted, date_deleted " \
-                    "from secoed.admin_academy_unit where id = %s"
+                    "from ceragen.admin_academy_unit where id = %s"
             record = (id,)
             res = DataBaseHandle.getRecords(query, 1, record)
             return res
@@ -46,7 +46,7 @@ class Unit_academy_component:
             v_result = False
             v_data = None
 
-            sql = "INSERT INTO secoed.admin_academy_unit( name, id_ies, description, phone_number, address, " \
+            sql = "INSERT INTO ceragen.admin_academy_unit( name, id_ies, description, phone_number, address, " \
 	              "manager_name, web_site, mail_address, state, user_created, date_created) " \
 	              "VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) "
 
@@ -72,7 +72,7 @@ class Unit_academy_component:
             v_message = None
             v_result = False
             v_data = None
-            sql = "UPDATE secoed.admin_academy_unit " \
+            sql = "UPDATE ceragen.admin_academy_unit " \
 	              "SET name=%s, id_ies=%s, description=%s, phone_number=%s, " \
                   "address=%s, manager_name=%s, web_site=%s, mail_address=%s, " \
                   "user_modified=%s, date_modified=%s " \
@@ -98,7 +98,7 @@ class Unit_academy_component:
     def deleteAcademyUnit(id, p_user):
         try:
             print(p_user)
-            query1 = "SELECT count(*) as total FROM secoed.admin_university_career " \
+            query1 = "SELECT count(*) as total FROM ceragen.admin_university_career " \
                      "where id_academic_unit = %s and state = true;"
 
             record1 = (id,)
@@ -109,7 +109,7 @@ class Unit_academy_component:
                 if int(data_ua['data']['total']) > 0:
                     return False, "No se puede eliminar el registro porque existen Carreras Universitarias asociadas"
                 else:
-                    query = "UPDATE secoed.admin_academy_unit " \
+                    query = "UPDATE ceragen.admin_academy_unit " \
                             "SET state = false, user_deleted = %s, date_deleted = %s WHERE id = %s"
                     record = (p_user, datetime.now(), id)
                     rows_affected = DataBaseHandle.ExecuteNonQuery(query, record)

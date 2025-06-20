@@ -11,8 +11,8 @@ class RolComponent:
             data = None
             sql = "select sr.rol_id, sr.rol_name, sr.rol_description, sr.is_admin_rol " \
                   "from ceragen.segu_rol sr " \
-                  "inner join ceragen.segu_user_rol ur on sr.rol_id = ur.rol_id " \
-                  "where ur.user_id = %s " \
+                  "inner join ceragen.segu_user_rol ur on sr.rol_id = ur.id_rol " \
+                  "where ur.id_user = %s " \
                   "and sr.rol_state = true and ur.state = true;"
 
             record = (p_id_user, )

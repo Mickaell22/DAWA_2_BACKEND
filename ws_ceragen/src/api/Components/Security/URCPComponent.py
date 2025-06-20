@@ -19,30 +19,30 @@ class urcpComponent:
                             sr.rol_name AS Rol
                            
                         FROM
-                            secoed.segu_user_rol_career_period ucrp
+                            ceragen.segu_user_rol_career_period ucrp
                         JOIN
-                            secoed.admin_career_period cp 
+                            ceragen.admin_career_period cp 
                             ON ucrp.urcp_career_period_id = cp.ucp_id 
                             AND cp.ucp_state = true
                         JOIN
-                            secoed.admin_university_career carrera 
+                            ceragen.admin_university_career carrera 
                             ON  cp.ucp_id_career = carrera.id 
                             AND carrera.state = true
                         JOIN
-                            secoed.admin_period periodo 
+                            ceragen.admin_period periodo 
                             ON  cp.ucp_id_period = periodo.id 
                             AND periodo.is_active_period = true
                         JOIN
-                            secoed.segu_user_rol sur 
+                            ceragen.segu_user_rol sur 
                             ON ucrp.urcp_id_user_rol = sur.id_user_rol 
                             AND sur.state = true
                         JOIN
-                            secoed.segu_user su 
+                            ceragen.segu_user su 
                             ON	sur.id_user = su.user_id 
                             AND su.user_state = true 
                             AND su.user_locked = false
                         JOIN
-                            secoed.segu_rol sr 
+                            ceragen.segu_rol sr 
                             ON	sur.id_rol = sr.rol_id 
                             AND sr.rol_state = true
                             
@@ -80,14 +80,14 @@ class urcpComponent:
                         pe.name AS periodo,
                         ca.name AS carrera
                     FROM
-                        secoed.admin_career_period cp
+                        ceragen.admin_career_period cp
                     JOIN
-                        secoed.admin_university_career ca 
+                        ceragen.admin_university_career ca 
                         ON cp.ucp_id_career = ca.id
                         AND ca.id_academic_unit = %s
                         AND ca.state = true
                     JOIN
-                        secoed.admin_period pe 
+                        ceragen.admin_period pe 
                         ON cp.ucp_id_period = pe.id
                         AND pe.state = true
                         AND pe.is_active_period = true
@@ -123,12 +123,12 @@ class urcpComponent:
             result = False
             message = None
             data = None
-            sql = """INSERT INTO secoed.segu_user_rol_career_period(
+            sql = """INSERT INTO ceragen.segu_user_rol_career_period(
                       urcp_id_user_rol, urcp_career_period_id, urcp_state, user_created, date_created)
                     SELECT %s,  %s, true,  %s,  timezone('America/Guayaquil', now())
                      WHERE NOT EXISTS (
                             SELECT 1
-                            FROM secoed.segu_user_rol_career_period 
+                            FROM ceragen.segu_user_rol_career_period 
                             WHERE urcp_id_user_rol = %s 
                             AND urcp_career_period_id = %s 
                             AND urcp_state = true
@@ -162,7 +162,7 @@ class urcpComponent:
             result = False
             message = None
             data = None
-            sql = "UPDATE secoed.segu_user_rol_career_period SET urcp_state = false, user_deleted = %s, date_deleted= timezone('America/Guayaquil', now()) WHERE urcp_id = %s"
+            sql = "UPDATE ceragen.segu_user_rol_career_period SET urcp_state = false, user_deleted = %s, date_deleted= timezone('America/Guayaquil', now()) WHERE urcp_id = %s"
 
             resultado = DataBaseHandle.ExecuteNonQuery(sql, record)
             HandleLogs.write_log(resultado)
@@ -188,7 +188,7 @@ class urcpComponent:
             result = False
             message = None
             data = None
-            sql = ("UPDATE secoed.segu_user_rol_career_period "
+            sql = ("UPDATE ceragen.segu_user_rol_career_period "
                    "SET urcp_career_period_id  = %s, "                   
                    "user_modified = %s, "
                    "date_modified = timezone('America/Guayaquil', now()) "

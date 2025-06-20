@@ -9,7 +9,7 @@ class LogoutComponent:
             result = False
             message = None
             data = None
-            sql = """UPDATE secoed.segu_login
+            sql = """UPDATE ceragen.segu_login
                         SET slo_date_end_connection = timezone('America/Guayaquil', now())
                         WHERE slo_id = %s"""
             resultado = DataBaseHandle.ExecuteNonQuery(sql, record)

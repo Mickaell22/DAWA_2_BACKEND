@@ -14,8 +14,8 @@ class University_Career_component:
                     "to_char(unitcar.date_created, 'DD/MM/YYYY HH24:MI:SS') as date_created, " \
                     "unitcar.user_modified, to_char(unitcar.date_modified, 'DD/MM/YYYY HH24:MI:SS') as date_modified, " \
                     "unitcar.user_deleted, unitcar.date_deleted, unit.name as unit_name " \
-                    "FROM secoed.admin_university_career unitcar " \
-                    "INNER JOIN secoed.admin_academy_unit unit on unit.id = unitcar.id_academic_unit " \
+                    "FROM ceragen.admin_university_career unitcar " \
+                    "INNER JOIN ceragen.admin_academy_unit unit on unit.id = unitcar.id_academic_unit " \
                     "WHERE unitcar.state = true"
 
             res = DataBaseHandle.getRecords(query, 0)
@@ -31,7 +31,7 @@ class University_Career_component:
                     "manager_name, web_site, mail_address, state, user_created, " \
                     "to_char(date_created, 'DD/MM/YYYY HH24:MI:SS') as date_created, " \
                     "user_modified, date_modified, user_deleted, date_deleted " \
-                    "FROM secoed.admin_university_career where id = %s"
+                    "FROM ceragen.admin_university_career where id = %s"
             record = (id,)
             res = DataBaseHandle.getRecords(query, 1, record)
             return res
@@ -45,7 +45,7 @@ class University_Career_component:
             v_message = None
             v_result = False
             v_data = None
-            sql = "INSERT INTO secoed.admin_university_career( name, id_academic_unit, description, title_granted, " \
+            sql = "INSERT INTO ceragen.admin_university_career( name, id_academic_unit, description, title_granted, " \
 	              "phone_number, address, manager_name, web_site, mail_address, state, user_created, date_created) " \
 	              "VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) "
 
@@ -71,7 +71,7 @@ class University_Career_component:
             v_message = None
             v_result = False
             v_data = None
-            sql = "UPDATE secoed.admin_university_career " \
+            sql = "UPDATE ceragen.admin_university_career " \
 	              "SET name=%s, id_academic_unit=%s, description=%s, title_granted=%s, phone_number=%s, " \
                   "address=%s, manager_name=%s, web_site=%s, mail_address=%s, " \
                   "user_modified=%s, date_modified=%s " \
@@ -96,7 +96,7 @@ class University_Career_component:
     @staticmethod
     def DeleteUniversityCareer(id, p_user):
         try:
-            query = "UPDATE secoed.admin_university_career " \
+            query = "UPDATE ceragen.admin_university_career " \
                      "SET state = false, user_deleted = %s, date_deleted = %s WHERE id = %s"
             record = (p_user, datetime.now(), id)
             rows_affected = DataBaseHandle.ExecuteNonQuery(query, record)

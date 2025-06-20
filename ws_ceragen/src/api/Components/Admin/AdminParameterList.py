@@ -13,7 +13,7 @@ class ParameterListcomponent:
             query = "select pli_id, pli_code_parameter, pli_is_numeric_return_value, pli_string_value_return, " \
                     "pli_numeric_value_return, pli_state, user_created, to_char(date_created, 'DD/MM/YYYY HH24:MI:SS') as date_created, " \
                     "user_modified, date_modified, user_deleted, date_deleted " \
-                    "FROM secoed.admin_parameter_list WHERE pli_state = true"
+                    "FROM ceragen.admin_parameter_list WHERE pli_state = true"
             res = DataBaseHandle.getRecords(query, 0)
             return json.loads(json.dumps(res, default=ParameterListcomponent.json_serial))
         except Exception as err:
@@ -26,7 +26,7 @@ class ParameterListcomponent:
             query = "select pli_id, pli_code_parameter, pli_is_numeric_return_value, pli_string_value_return, " \
                     "pli_numeric_value_return , pli_state, user_created, to_char(date_created, 'DD/MM/YYYY HH24:MI:SS') as date_created, " \
                     "user_modified, date_modified, user_deleted, date_deleted " \
-                    "FROM secoed.admin_parameter_list WHERE pli_state = %s"
+                    "FROM ceragen.admin_parameter_list WHERE pli_state = %s"
             record = (pli_id,)
             res = DataBaseHandle.getRecords(query, 1, record)
             return res
@@ -42,7 +42,7 @@ class ParameterListcomponent:
             v_message = None
             v_result = False
             v_data = None
-            sql = "INSERT INTO secoed.admin_parameter_list(pli_code_parameter, pli_is_numeric_return_value, " \
+            sql = "INSERT INTO ceragen.admin_parameter_list(pli_code_parameter, pli_is_numeric_return_value, " \
                   "pli_string_value_return, pli_numeric_value_return, pli_state, user_created, date_created) " \
                   "VALUES (%s, %s, %s, %s, %s, %s, %s)"
 
@@ -67,7 +67,7 @@ class ParameterListcomponent:
             v_message = None
             v_result = False
             v_data = None
-            sql = "UPDATE secoed.admin_parameter_list " \
+            sql = "UPDATE ceragen.admin_parameter_list " \
 	              "SET pli_code_parameter=%s, pli_string_value_return=%s, " \
                   "pli_numeric_value_return=%s, user_modified=%s, date_modified=%s " \
 	              "WHERE pli_id = %s"
@@ -90,7 +90,7 @@ class ParameterListcomponent:
     @staticmethod
     def DeleteParamaterList(pli_id, p_user):
         try:
-            query = "UPDATE secoed.admin_parameter_list " \
+            query = "UPDATE ceragen.admin_parameter_list " \
                      "SET pli_state = false, user_deleted = %s, date_deleted = %s WHERE pli_id = %s"
             record = (p_user, datetime.now(), pli_id)
             rows_affected = DataBaseHandle.ExecuteNonQuery(query, record)
