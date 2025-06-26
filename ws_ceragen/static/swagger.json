@@ -3988,6 +3988,13 @@
         "operationId": "GetPersonGenreById",
         "produces": ["application/json"],
         "parameters": [
+           {
+            "in": "header",
+            "name": "tokenapp",
+            "description": "Token para aplicación",
+            "required": true,
+            "type": "string"
+          },
           {
             "name": "id",
             "in": "path",
@@ -4168,6 +4175,431 @@
         }
       }
     },
+  "/admin/MedicalStaff/list": {
+    "get": {
+      "tags": ["Administrador"],
+      "summary": "Listar Personal Médico",
+      "description": "Devuelve una lista de todos los registros de personal médico ",
+      "operationId": "ListMedicalStaff",
+      "produces": ["application/json"],
+      "parameters": [
+          {
+            "in": "header",
+            "name": "tokenapp",
+            "description": "Token para aplicación",
+            "required": true,
+            "type": "string"
+          }
+        ],
+      "responses": {
+          "200": {
+            "description": "Operación exitosa",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          },
+          "500": {
+            "description": "Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "400": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/NotFound"
+            }
+          }
+        }
+    }
+  },
+    "/admin/MedicalStaff/list/{id}": {
+    "get": {
+      "tags": ["Administrador"],
+      "summary": "Obtener Personal Médico por ID",
+      "description": "Obtiene un registro de personal médico por su identificador.",
+      "operationId": "GetMedicalStaffById",
+      "parameters": [
+        {
+            "in": "header",
+            "name": "tokenapp",
+            "description": "Token para aplicación",
+            "required": true,
+            "type": "string"
+        },
+        {
+          "name": "id",
+          "in": "path",
+          "description": "ID del personal médico",
+          "required": true,
+          "type": "integer",
+          "format": "int64"
+        }
+      ],
+      "responses": {
+          "200": {
+            "description": "Operación exitosa",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          },
+          "500": {
+            "description": "Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "400": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/NotFound"
+            }
+          }
+        }
+    }
+  },
+     "/admin/MedicalStaff/add": {
+    "post": {
+      "tags": ["Administrador"],
+      "summary": "Agregar Personal Médico",
+      "description": "Agrega un nuevo registro de personal médico.",
+      "operationId": "AddMedicalStaff",
+      "parameters": [
+        {
+            "in": "header",
+            "name": "tokenapp",
+            "description": "Token para aplicación",
+            "required": true,
+            "type": "string"
+        },
+        {
+          "in": "body",
+          "name": "body",
+          "description": "Datos del nuevo personal médico",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/insert_medical_staff"
+          }
+        }
+      ],
+      "responses": {
+          "200": {
+            "description": "Operación exitosa",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          },
+          "500": {
+            "description": "Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "400": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/NotFound"
+            }
+          }
+        }
+    }
+  },
+    "/admin/MedicalStaff/update": {
+    "patch": {
+      "tags": ["Administrador"],
+      "summary": "Actualizar Personal Médico",
+      "description": "Actualiza un registro existente de personal médico.",
+      "operationId": "UpdateMedicalStaff",
+      "parameters": [
+        {
+            "in": "header",
+            "name": "tokenapp",
+            "description": "Token para aplicación",
+            "required": true,
+            "type": "string"
+        },
+        {
+          "in": "body",
+          "name": "body",
+          "description": "Datos del personal médico a actualizar",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/update_medical_staff"
+          }
+        }
+      ],
+      "responses": {
+          "200": {
+            "description": "Operación exitosa",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          },
+          "500": {
+            "description": "Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "400": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/NotFound"
+            }
+          }
+        }
+    }
+  },
+    "/admin/MedicalStaff/delete/{id}/{user}": {
+      "delete": {
+        "tags": ["Administrador"],
+        "summary": "Eliminar Personal Médico por ID",
+        "description": "Elimina un registro de personal médico usando su ID.",
+        "operationId": "DeleteMedicalStaff",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "tokenapp",
+            "description": "Token para aplicación",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID del personal médico a eliminar",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "user",
+            "in": "path",
+            "description": "Usuario que realiza la eliminación",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+            "200": {
+              "description": "Operación exitosa",
+              "schema": {
+                "$ref": "#/definitions/Response"
+              }
+            },
+            "500": {
+              "description": "Error",
+              "schema": {
+                "$ref": "#/definitions/ErrorResponse"
+              }
+            },
+            "400": {
+              "description": "Not Found",
+              "schema": {
+                "$ref": "#/definitions/NotFound"
+              }
+            }
+          }
+      }
+    },
+    "/admin/MedicPersonType/list": {
+    "get": {
+      "tags": ["Administrador"],
+      "summary": "Listar Tipos de Personal Médico",
+      "description": "Devuelve una lista de todos los tipos de personal médico.",
+      "operationId": "ListMedicPersonType",
+      "produces": ["application/json"],
+      "parameters": [
+        {
+          "in": "header",
+          "name": "tokenapp",
+          "description": "Token para aplicación",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Operación exitosa",
+          "schema": { "$ref": "#/definitions/Response" }
+        },
+        "500": {
+          "description": "Error",
+          "schema": { "$ref": "#/definitions/ErrorResponse" }
+        },
+        "400": {
+          "description": "Not Found",
+          "schema": { "$ref": "#/definitions/NotFound" }
+        }
+      }
+    }
+  },
+    "/admin/MedicPersonType/list/{id}": {
+      "get": {
+        "tags": ["Administrador"],
+        "summary": "Obtener Tipo de Personal Médico por ID",
+        "description": "Obtiene un tipo de personal médico por su identificador.",
+        "operationId": "GetMedicPersonTypeById",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "tokenapp",
+            "description": "Token para aplicación",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID del tipo de personal médico",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operación exitosa",
+            "schema": { "$ref": "#/definitions/Response" }
+          },
+          "500": {
+            "description": "Error",
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
+          },
+          "400": {
+            "description": "Not Found",
+            "schema": { "$ref": "#/definitions/NotFound" }
+          }
+        }
+      }
+    },
+    "/admin/MedicPersonType/add": {
+      "post": {
+        "tags": ["Administrador"],
+        "summary": "Agregar Tipo de Personal Médico",
+        "description": "Agrega un nuevo tipo de personal médico.",
+        "operationId": "AddMedicPersonType",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "tokenapp",
+            "description": "Token para aplicación",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Datos del nuevo tipo de personal médico",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/insert_medic_person_type"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operación exitosa",
+            "schema": { "$ref": "#/definitions/Response" }
+          },
+          "500": {
+            "description": "Error",
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
+          },
+          "400": {
+            "description": "Not Found",
+            "schema": { "$ref": "#/definitions/NotFound" }
+          }
+        }
+      }
+    },
+    "/admin/MedicPersonType/update": {
+      "patch": {
+        "tags": ["Administrador"],
+        "summary": "Actualizar Tipo de Personal Médico",
+        "description": "Actualiza un tipo de personal médico existente.",
+        "operationId": "UpdateMedicPersonType",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "tokenapp",
+            "description": "Token para aplicación",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Datos del tipo de personal médico a actualizar",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/update_medic_person_type"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operación exitosa",
+            "schema": { "$ref": "#/definitions/Response" }
+          },
+          "500": {
+            "description": "Error",
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
+          },
+          "400": {
+            "description": "Not Found",
+            "schema": { "$ref": "#/definitions/NotFound" }
+          }
+        }
+      }
+    },
+    "/admin/MedicPersonType/delete/{id}/{user}": {
+      "delete": {
+        "tags": ["Administrador"],
+        "summary": "Eliminar Tipo de Personal Médico por ID",
+        "description": "Elimina un tipo de personal médico usando su ID.",
+        "operationId": "DeleteMedicPersonType",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "tokenapp",
+            "description": "Token para aplicación",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID del tipo de personal médico a eliminar",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "user",
+            "in": "path",
+            "description": "Usuario que realiza la eliminación",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operación exitosa",
+            "schema": { "$ref": "#/definitions/Response" }
+          },
+          "500": {
+            "description": "Error",
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
+          },
+          "400": {
+            "description": "Not Found",
+            "schema": { "$ref": "#/definitions/NotFound" }
+          }
+        }
+      }
+    },
+
     "/admin/University_Career/list": {
       "get": {
         "tags": ["Administrador"],
@@ -7264,6 +7696,107 @@
         }
       }
     },
+    "insert_medical_staff": {
+      "type": "object",
+      "properties": {
+        "med_person_id": {
+          "type": "integer",
+          "format": "int64",
+          "description": "ID de la persona asociada al personal médico"
+        },
+        "med_type_id": {
+          "type": "integer",
+          "format": "int64",
+          "description": "ID del tipo de personal médico (médico general, especialista, etc.)"
+        },
+        "med_registration_number": {
+          "type": "integer",
+          "description": "Número de registro profesional del personal médico"
+        },
+        "med_specialty": {
+          "type": "string",
+          "description": "Especialidad médica del personal (Ej: Pediatría, Cardiología)"
+        },
+        "user_process": {
+          "type": "string",
+          "description": "Usuario que realiza la acción"
+        }
+      }
+    },
+    "update_medical_staff": {
+      "type": "object",
+      "properties": {
+        "med_id": {
+          "type": "integer",
+          "format": "int64",
+          "description": "ID del registro de personal médico que se desea actualizar"
+        },
+        "med_person_id": {
+          "type": "integer",
+          "format": "int64",
+          "description": "ID de la persona asociada al personal médico"
+        },
+        "med_type_id": {
+          "type": "integer",
+          "format": "int64",
+          "description": "ID del tipo de personal médico (médico general, especialista, etc.)"
+        },
+        "med_registration_number": {
+          "type": "integer",
+          "description": "Número de registro profesional del personal médico"
+        },
+        "med_specialty": {
+          "type": "string",
+          "description": "Especialidad médica del personal (Ej: Pediatría, Cardiología)"
+        },
+        "user_process": {
+          "type": "string",
+          "description": "Usuario que realiza la acción"
+        }
+      }
+    },
+    "insert_medic_person_type": {
+    "type": "object",
+    "properties": {
+      "mpt_name": {
+        "type": "string",
+        "description": "Nombre del tipo de personal médico"
+      },
+      "mpt_description": {
+        "type": "string",
+        "description": "Descripción del tipo de personal médico"
+      },
+      "user_process": {
+        "type": "string",
+        "description": "Usuario que realiza la acción"
+      }
+    },
+    "required": ["mpt_name", "mpt_description", "user_process"]
+  },
+    "update_medic_person_type": {
+    "type": "object",
+    "properties": {
+      "mpt_id": {
+        "type": "integer",
+        "format": "int64",
+        "description": "ID del tipo de personal médico que se desea actualizar"
+      },
+      "mpt_name": {
+        "type": "string",
+        "description": "Nombre del tipo de personal médico"
+      },
+      "mpt_description": {
+        "type": "string",
+        "description": "Descripción del tipo de personal médico"
+      },
+      "user_process": {
+        "type": "string",
+        "description": "Usuario que realiza la acción"
+      }
+    },
+    "required": ["mpt_id", "mpt_name", "mpt_description", "user_process"]
+  },
+
     "up_useRol": {
       "type": "object",
       "properties": {
