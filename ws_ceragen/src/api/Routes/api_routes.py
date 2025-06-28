@@ -26,6 +26,18 @@ from ..Services.Admin.AdminPerson_genre_service import (admin_Person_genre_servi
                                                         admin_Person_Genre_service_Update,
                                                         admin_Person_Genre_service_Delete)
 
+from ..Services.Admin.AdminMedicalStaffService import (admin_Medical_staff_service_get,
+                                                       admin_Medical_staff_getbyid,
+                                                       admin_Medical_staff_service_add,
+                                                       admin_Medical_staff_service_Update,
+                                                       admin_Medical_staff_service_Delete)
+
+from ..Services.Admin.AdminMedicPersonTypeService import (admin_MedicPersonType_service_get,
+                                                          admin_MedicPersonType_getbyid,
+                                                          admin_MedicPersonType_service_add,
+                                                          admin_MedicPersonType_service_Update,
+                                                          admin_MedicPersonType_service_Delete)
+
 from ..Services.Security.LoginService import LoginService
 from ..Services.Security.LogoutService import LogoutService
 from ..Services.Security.UserService import UserService, UserInsert, UserDelete, UserUpdate,UserpasswordUpdate,RecoveringPassword,EmailPasswordUpdate
@@ -76,6 +88,21 @@ def load_routes(api):
     api.add_resource(admin_Person_Genre_service_add, '/admin/Person_genre/add')   # Add
     api.add_resource(admin_Person_Genre_service_Update, '/admin/Person_genre/update')   # Update
     api.add_resource(admin_Person_Genre_service_Delete, '/admin/Person_genre/delete/<int:id>/<string:user>')  # Delete
+
+    #Ruta de Tabla Medical Staff
+    api.add_resource(admin_Medical_staff_service_get, '/admin/MedicalStaff/list')  # List
+    api.add_resource(admin_Medical_staff_getbyid, '/admin/MedicalStaff/list/<int:id>') # List for ID
+    api.add_resource(admin_Medical_staff_service_add, '/admin/MedicalStaff/add') # Add
+    api.add_resource(admin_Medical_staff_service_Update, '/admin/MedicalStaff/update') # Update
+    api.add_resource(admin_Medical_staff_service_Delete, '/admin/MedicalStaff/delete/<int:id>/<string:user>') # Delete
+
+    #Ruta de Tabla Medic Person Type
+    api.add_resource(admin_MedicPersonType_service_get, '/admin/MedicPersonType/list')
+    api.add_resource(admin_MedicPersonType_getbyid, '/admin/MedicPersonType/list/<int:id>')
+    api.add_resource(admin_MedicPersonType_service_add, '/admin/MedicPersonType/add')
+    api.add_resource(admin_MedicPersonType_service_Update, '/admin/MedicPersonType/update')
+    api.add_resource(admin_MedicPersonType_service_Delete, '/admin/MedicPersonType/delete/<int:id>/<string:user>')
+
     #******* SECURITY PATH ******#
     #metodo para el login
     api.add_resource(LoginService, '/security/login')
