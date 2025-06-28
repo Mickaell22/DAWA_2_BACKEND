@@ -7,12 +7,11 @@ def response_inserted(datos):
         'status_code': 201,
     }, 201
 
-def response_not_found():
+def response_not_found(message="No encontrado"):
     return {
         'result': False,
-        'message': "No hay datos para la consulta",
-        'data': {},
-        'status_code': 404,
+        'message': message,
+        'data': []
     }, 404
 
 def response_success(datos):
