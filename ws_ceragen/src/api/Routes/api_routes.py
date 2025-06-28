@@ -56,10 +56,45 @@ from ..Services.Audit.ErrorService import ErrorService
 from ..Services.Security.URCPService import urcpList,Updateurcp,Deleteurcp,Inserturcp
 from ..Services.Security.UserService import UserListId
 #-------------------------------------------------------------------------------
+                        #RUTAS JHOEL
+#-------------------------------------------------------------------------------
+
+from ..Services.Admin.AdminTherapyService import (
+    AdminTherapyService_get,
+    AdminTherapyService_getbyid,
+    AdminTherapyService_add,
+    AdminTherapyService_update,
+    AdminTherapyService_delete
+)
+from ..Services.Admin.AdminProductService import (
+    AdminProductService_get,
+    AdminProductService_getbyid,
+    AdminProductService_add,
+    AdminProductService_update,
+    AdminProductService_delete
+)
+#-------------------------------------------------------------------------------
 #user/insert
 #-------------------------------------------------------------------------------
 
 def load_routes(api):
+    # -------------------------------------------------------------------------------
+    # user/insert
+    # -------------------------------------------------------------------------------
+    # Ruta de Tabla Therapy Type
+    api.add_resource(AdminTherapyService_get, '/admin/therapy-type/list')  # List
+    api.add_resource(AdminTherapyService_getbyid, '/admin/therapy-type/list/<int:tht_id>')  # List for ID
+    api.add_resource(AdminTherapyService_add, '/admin/therapy-type/add')  # Add
+    api.add_resource(AdminTherapyService_update, '/admin/therapy-type/update')  # Update
+    api.add_resource(AdminTherapyService_delete, '/admin/therapy-type/delete/<int:tht_id>/<string:user>')  # Delete
+    # Ruta de Tabla Product
+    api.add_resource(AdminProductService_get, '/admin/products/list')
+    api.add_resource(AdminProductService_getbyid, '/admin/products/list/<int:pro_id>')
+    api.add_resource(AdminProductService_add, '/admin/products/add')
+    api.add_resource(AdminProductService_update, '/admin/products/update')
+    api.add_resource(AdminProductService_delete, '/admin/products/delete/<int:pro_id>/<string:user>')
+
+    # -------------------------------------------------------------------------------
 
     # Ruta de Tabla Person
     api.add_resource(AdminPersonService_get, '/admin/persons/list')   # List
