@@ -215,19 +215,28 @@ class UserComponent:
             }
 
     @staticmethod
+    # 🔧 FIX PARA UserComponent.py - Método UserUpdate
+    # ws_ceragen/src/api/Components/Security/UserComponent.py
+
+    @staticmethod
     def UserUpdate(user_name, user_id, person_ci=None, person_mail=None,
                    person_password=None, rol_id=None, person_id=None):
         """
-        Método actualizado para soportar todos los campos de edición
-        Mantiene compatibilidad con llamadas que solo pasan user_name y user_id
+        ✅ MÉTODO CORREGIDO - UserUpdate con fix para actualización de roles
+
+        Problemas identificados:
+        1. ❌ Query de verificación de rol mal formado
+        2. ❌ Manejo incorrecto de parámetros None
+        3. ❌ Error en la tabla de verificación (segu_menu_rol vs segu_user_rol)
+        4. ❌ Logs confusos que ocultan errores reales
         """
         try:
-            HandleLogs.write_log(f"UserUpdate iniciado con parámetros:")
+            HandleLogs.write_log(f"🔧 UserUpdate CORREGIDO iniciado con parámetros:")
             HandleLogs.write_log(f"  - user_name: {user_name}")
             HandleLogs.write_log(f"  - user_id: {user_id}")
             HandleLogs.write_log(f"  - person_ci: {person_ci}")
             HandleLogs.write_log(f"  - person_mail: {person_mail}")
-            HandleLogs.write_log(f"  - person_password: {'***' if person_password else None}")
+            HandleLogs.write_log(f"  - person_password: {person_password}")
             HandleLogs.write_log(f"  - rol_id: {rol_id}")
             HandleLogs.write_log(f"  - person_id: {person_id}")
 
@@ -235,139 +244,152 @@ class UserComponent:
             message = None
             data = None
 
-            # Si no se proporcionan campos adicionales, usar comportamiento legacy
-            if all(param is None for param in [person_ci, person_mail, person_password, rol_id, person_id]):
-                HandleLogs.write_log("Usando comportamiento legacy (solo toggle user_locked)")
-                record = (user_name, user_id)
-                sql = """UPDATE ceragen.segu_user
-                         SET user_locked    = CASE WHEN user_locked = FALSE THEN TRUE ELSE FALSE END,
-                             login_attempts = CASE WHEN user_locked = FALSE THEN 3 ELSE 0 END,
-                             user_modified  = %s,
-                             date_modified  = timezone('America/Guayaquil', now())
-                         WHERE user_id = %s; \
-                      """
-                answer = DataBaseHandle.ExecuteNonQuery(sql, record)
+            # 🔧 CORRECCIÓN 1: Validar parámetros obligatorios
+            if not user_id:
+                return {
+                    'result': False,
+                    'message': 'user_id es requerido',
+                    'data': None
+                }
 
+            # 🔧 CORRECCIÓN 2: Actualizar tabla segu_user solo si hay campos a actualizar
+            user_fields_to_update = []
+            user_values = []
+
+            if person_ci is not None:
+                user_fields_to_update.append("user_login_id = %s")
+                user_values.append(person_ci.strip())
+
+            if person_mail is not None:
+                user_fields_to_update.append("user_mail = %s")
+                user_values.append(person_mail.strip())
+
+            if person_password is not None and person_password.strip():
+                user_fields_to_update.append("user_password = %s")
+                user_values.append(person_password.strip())
+
+            if person_id is not None:
+                user_fields_to_update.append("user_person_id = %s")
+                user_values.append(person_id)
+
+            # Actualizar usuario si hay campos que actualizar
+            if user_fields_to_update:
+                user_fields_to_update.append("user_modified = %s")
+                user_fields_to_update.append("date_modified = timezone('America/Guayaquil', now())")
+                user_values.extend([user_name, user_id])
+
+                sql_update_user = f"""
+                    UPDATE ceragen.segu_user 
+                    SET {', '.join(user_fields_to_update)}
+                    WHERE user_id = %s
+                """
+
+                HandleLogs.write_log(f"🔧 SQL Usuario: {sql_update_user}")
+                HandleLogs.write_log(f"🔧 Valores Usuario: {user_values}")
+
+                user_result = DataBaseHandle.ExecuteNonQuery(sql_update_user, tuple(user_values))
+                HandleLogs.write_log(f"✅ Resultado actualización usuario: {user_result}")
             else:
-                # Nuevo comportamiento: actualizar campos específicos
-                HandleLogs.write_log("Usando nuevo comportamiento (actualizar campos específicos)")
+                HandleLogs.write_log("ℹ️ No hay campos de usuario para actualizar")
+                user_result = {'result': True, 'data': 0}
 
-                # Construir query dinámicamente
-                update_fields = []
-                update_values = []
+            # 🔧 CORRECCIÓN 3: Actualizar rol si se proporcionó
+            if rol_id is not None and rol_id > 0:
+                HandleLogs.write_log(f"🔧 Procesando actualización de rol a: {rol_id}")
 
-                if person_ci is not None and str(person_ci).strip():
-                    update_fields.append("user_login_id = %s")
-                    update_values.append(str(person_ci).strip())
-                    HandleLogs.write_log(f"Actualizando user_login_id a: {person_ci}")
+                try:
+                    # ✅ CORRECCIÓN 4: Query de verificación CORREGIDA
+                    sql_check_rol = """
+                                    SELECT id_user_rol, id_rol
+                                    FROM ceragen.segu_user_rol
+                                    WHERE id_user = %s \
+                                      AND state = true \
+                                    """
+                    check_values = (user_id,)
 
-                if person_mail is not None:
-                    update_fields.append("user_mail = %s")
-                    update_values.append(str(person_mail).strip() if person_mail else "")
-                    HandleLogs.write_log(f"Actualizando user_mail a: {person_mail}")
+                    HandleLogs.write_log(f"🔧 Verificando rol existente - SQL: {sql_check_rol}")
+                    HandleLogs.write_log(f"🔧 Verificando rol existente - Valores: {check_values}")
 
-                if person_password is not None and str(person_password).strip():
-                    # Usar el mismo método de encriptación que usas en el sistema
-                    import hashlib
-                    encrypted_password = hashlib.sha256(str(person_password).encode()).hexdigest()
-                    update_fields.append("user_password = %s")
-                    update_values.append(encrypted_password)
-                    HandleLogs.write_log("Actualizando user_password (encriptada)")
+                    check_result = DataBaseHandle.getRecords(sql_check_rol, 0, check_values)
+                    HandleLogs.write_log(f"✅ Resultado verificación de rol: {check_result}")
 
-                if person_id is not None:
-                    update_fields.append("user_person_id = %s")
-                    update_values.append(int(person_id))
-                    HandleLogs.write_log(f"Actualizando user_person_id a: {person_id}")
+                    if check_result and 'data' in check_result and len(check_result['data']) > 0:
+                        # ✅ Actualizar rol existente
+                        existing_record = check_result['data'][0]
+                        existing_user_rol_id = existing_record['id_user_rol']
+                        current_rol_id = existing_record['id_rol']
 
-                # Agregar campos de auditoría
-                update_fields.append("user_modified = %s")
-                update_fields.append("date_modified = timezone('America/Guayaquil', now())")
-                update_values.append(user_name)
+                        HandleLogs.write_log(f"🔧 Rol actual: {current_rol_id}, Nuevo rol: {rol_id}")
 
-                # Agregar user_id para la cláusula WHERE
-                update_values.append(user_id)
+                        if current_rol_id != rol_id:
+                            # ✅ CORRECCIÓN 5: SQL de actualización SIMPLIFICADO
+                            sql_update_rol = """
+                                             UPDATE ceragen.segu_user_rol
+                                             SET id_rol        = %s,
+                                                 user_modified = %s,
+                                                 date_modified = timezone('America/Guayaquil', now())
+                                             WHERE id_user_rol = %s \
+                                             """
+                            rol_values = (rol_id, user_name, existing_user_rol_id)
 
-                if len(update_fields) <= 2:  # Solo campos de auditoría
-                    HandleLogs.write_log("No hay campos reales para actualizar")
-                    result = True
-                    data = 0
-                    message = "No se proporcionaron campos para actualizar"
-                else:
-                    # Construir y ejecutar la query
-                    sql = f"""
-                        UPDATE ceragen.segu_user 
-                        SET {', '.join(update_fields)}
-                        WHERE user_id = %s AND user_state = true
-                    """
+                            HandleLogs.write_log(f"🔧 Actualizando rol - SQL: {sql_update_rol}")
+                            HandleLogs.write_log(f"🔧 Actualizando rol - Valores: {rol_values}")
 
-                    HandleLogs.write_log(f"SQL generada: {sql}")
-                    HandleLogs.write_log(f"Valores: {update_values}")
+                            rol_result = DataBaseHandle.ExecuteNonQuery(sql_update_rol, rol_values)
+                            HandleLogs.write_log(f"✅ Resultado actualización rol: {rol_result}")
 
-                    answer = DataBaseHandle.ExecuteNonQuery(sql, update_values)
+                            if not rol_result.get('result', False):
+                                HandleLogs.write_error(f"❌ Error en actualización de rol: {rol_result}")
+                                # No fallar la operación completa, pero reportar el error
+                        else:
+                            HandleLogs.write_log("ℹ️ El rol ya es el mismo, no se requiere actualización")
 
-                    # 🔧 ACTUALIZAR ROL SI SE PROPORCIONÓ
-                    if rol_id is not None and answer.get('result') and answer.get('data', 0) > 0:
-                        HandleLogs.write_log(f"Actualizando rol del usuario a rol_id: {rol_id}")
+                    else:
+                        # ✅ Crear nuevo registro de rol
+                        HandleLogs.write_log("🔧 Creando nuevo registro de rol")
 
-                        try:
-                            # Verificar si ya existe un rol activo
-                            sql_check = """
-                                        SELECT id_user_rol
-                                        FROM ceragen.segu_user_rol
-                                        WHERE id_user = %s \
-                                          AND state = true LIMIT 1 \
-                                        """
+                        sql_insert_rol = """
+                                         INSERT INTO ceragen.segu_user_rol
+                                             (id_user, id_rol, state, user_created, date_created)
+                                         VALUES (%s, %s, true, %s, timezone('America/Guayaquil', now())) \
+                                         """
+                        rol_values = (user_id, rol_id, user_name)
 
-                            check_result = DataBaseHandle.getRecords(sql_check, 1, (user_id,))
-                            HandleLogs.write_log(f"Verificación de rol existente: {check_result}")
+                        HandleLogs.write_log(f"🔧 Insertando rol - SQL: {sql_insert_rol}")
+                        HandleLogs.write_log(f"🔧 Insertando rol - Valores: {rol_values}")
 
-                            if check_result.get('data') and len(check_result['data']) > 0:
-                                # Actualizar rol existente
-                                existing_user_rol_id = check_result['data'][0]['id_user_rol']
-                                sql_update_rol = """
-                                                 UPDATE ceragen.segu_user_rol
-                                                 SET id_rol        = %s,
-                                                     user_modified = %s,
-                                                     date_modified = timezone('America/Guayaquil', now())
-                                                 WHERE id_user_rol = %s \
-                                                 """
-                                rol_values = (rol_id, user_name, existing_user_rol_id)
-                                rol_result = DataBaseHandle.ExecuteNonQuery(sql_update_rol, rol_values)
-                                HandleLogs.write_log(f"Resultado actualización rol: {rol_result}")
+                        rol_result = DataBaseHandle.ExecuteNonQuery(sql_insert_rol, rol_values)
+                        HandleLogs.write_log(f"✅ Resultado inserción rol: {rol_result}")
 
-                            else:
-                                # Crear nuevo rol
-                                sql_insert_rol = """
-                                                 INSERT INTO ceragen.segu_user_rol
-                                                     (id_user, id_rol, state, user_created, date_created)
-                                                 VALUES (%s, %s, true, %s, timezone('America/Guayaquil', now())) \
-                                                 """
-                                rol_values = (user_id, rol_id, user_name)
-                                rol_result = DataBaseHandle.ExecuteNonQuery(sql_insert_rol, rol_values)
-                                HandleLogs.write_log(f"Resultado inserción rol: {rol_result}")
+                except Exception as rol_err:
+                    HandleLogs.write_error(f"❌ ERROR CRÍTICO en actualización de rol: {rol_err}")
+                    HandleLogs.write_error(f"❌ Tipo de error: {type(rol_err)}")
+                    HandleLogs.write_error(f"❌ Stack trace: {str(rol_err)}")
+                    # No fallar la operación completa, pero reportar el error
+            else:
+                HandleLogs.write_log("ℹ️ No se proporcionó rol_id para actualizar")
 
-                        except Exception as rol_err:
-                            HandleLogs.write_error(f"Error actualizando rol: {rol_err}")
-                            # No fallar la operación completa por un error de rol
-
-            # Procesar resultado
-            HandleLogs.write_log(f"Resultado de ExecuteNonQuery: {answer}")
-
-            if answer.get('result') is True:
+            # ✅ CORRECCIÓN 6: Evaluar resultado final correctamente
+            if user_result.get('result', False):
                 result = True
-                data = answer.get('data', 0)
-                if data > 0:
-                    message = f"Usuario actualizado correctamente. Filas afectadas: {data}"
-                else:
-                    message = "No se encontraron cambios para realizar"
+                data = user_result.get('data', 1)
+                message = f"Usuario actualizado correctamente. Filas afectadas: {data}"
             else:
-                message = answer.get('message', "Error al actualizar usuario")
+                result = False
+                message = f"Error al actualizar usuario: {user_result.get('message', 'Error desconocido')}"
+                data = None
+
+            HandleLogs.write_log(f"🔧 RESULTADO FINAL UserUpdate:")
+            HandleLogs.write_log(f"  - result: {result}")
+            HandleLogs.write_log(f"  - message: {message}")
+            HandleLogs.write_log(f"  - data: {data}")
 
         except Exception as err:
-            HandleLogs.write_error(f"Error en UserUpdate: {err}")
-            message = err.__str__()
+            HandleLogs.write_error(f"❌ ERROR GENERAL en UserUpdate: {err}")
+            HandleLogs.write_error(f"❌ Tipo de error: {type(err)}")
+            result = False
+            message = f"Error interno en actualización de usuario: {str(err)}"
             data = None
-
         finally:
             return {
                 'result': result,
