@@ -11,24 +11,25 @@ from ....api.Model.Request.Security.UpdateUser import UpdateUserSchema
 from ....api.Model.Request.Security.UpdateUserPassword import UpdateUserPasswordSchema
 from ....api.Model.Request.Security.RecoveringPassword import RecoveringPasswordSchema, UpdatePasswordSchema
 
+
 class UserService(Resource):
     @staticmethod
     def get():
         try:
             HandleLogs.write_log("Listado de Usuarios")
-            #Obtengo el token
+            # Obtengo el token
             token = request.headers['tokenapp']
             client_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
 
             if token is None:
                 return response_error("Error: No se ha podido Obtener el Token")
 
-            #Validar el Token
+            # Validar el Token
             token_valido = TokenComponent.Token_Validate(token)
             if not token_valido:
                 return response_unauthorize()
 
-            #LLamar al metodo del componente
+            # LLamar al metodo del componente
             resultado = UserComponent.ListAllUsers()
             if resultado:
                 return response_success(resultado['data'])
@@ -36,6 +37,7 @@ class UserService(Resource):
                 return response_error(resultado['message'])
         except Exception as err:
             HandleLogs.write_error(err)
+
 
 class UserInsert(Resource):
     @staticmethod
@@ -60,8 +62,8 @@ class UserInsert(Resource):
             user_name = TokenComponent.User(token)
             # LLamar al metodo del componente
             answer = UserComponent.UserInsert(rq_json['person_id'], rq_json['person_ci'], rq_json['person_password'],
-                                            rq_json['person_mail'], user_name, rq_json['rol_id'],
-                                            rq_json['id_career_period'])
+                                              rq_json['person_mail'], user_name, rq_json['rol_id'],
+                                              rq_json['id_career_period'])
             if answer['result'] is True:
                 return response_inserted(answer['data'])
             else:
@@ -110,6 +112,10 @@ class UserUpdate(Resource):
             HandleLogs.write_log("Actualizar User")
             token = request.headers['tokenapp']
             rq_json = request.get_json()
+
+            # 🔧 LOG ADICIONAL PARA DEBUGGING
+            HandleLogs.write_log(f"Datos recibidos para actualización: {rq_json}")
+
             new_request = UpdateUserSchema()
             error = new_request.validate(rq_json)
             if error:
@@ -124,15 +130,26 @@ class UserUpdate(Resource):
             if not token_valido:
                 return response_unauthorize()
             user_name = TokenComponent.User(token)
-            # LLamar al metodo del componente
-            answer = UserComponent.UserUpdate(user_name, rq_json['id_user'])
-            HandleLogs.write_log(answer)
+
+            # 🔧 LLAMADA CORREGIDA: Pasar todos los datos del formulario
+            answer = UserComponent.UserUpdate(
+                user_name=user_name,
+                user_id=rq_json['id_user'],
+                person_ci=rq_json.get('person_ci'),
+                person_mail=rq_json.get('person_mail'),
+                person_password=rq_json.get('person_password'),
+                rol_id=rq_json.get('rol_id'),
+                person_id=rq_json.get('person_id')
+            )
+
+            HandleLogs.write_log(f"Resultado de UserUpdate: {answer}")
+
             if answer['result'] is True:
                 return response_success(answer['data'])
             else:
                 return response_error(answer['message'])
         except Exception as err:
-            HandleLogs.write_error(err)
+            HandleLogs.write_error(f"Error en UserUpdate: {err}")
             return response_error(err.__str__())
 
 
@@ -158,12 +175,52 @@ class UserpasswordUpdate(Resource):
                 return response_unauthorize()
             user_name = TokenComponent.User(token)
             # LLamar al metodo del componente
-            answer = UserComponent.UserPasswordUpdate(rq_json['newPassword'], user_name,
-                                                            rq_json['user_id'], rq_json['oldPassword'])
-            HandleLogs.write_log(answer)
+            answer = UserComponent.UserpasswordUpdate(user_name, rq_json['id_user'], rq_json['id_password'])
             if answer['result'] is True:
-                if answer['data'] is None or answer['data'] == 0:
-                    return response_not_found()
+                return response_success(answer['data'])
+            else:
+                return response_error(answer['message'])
+        except Exception as err:
+            HandleLogs.write_error(err)
+            return response_error(err.__str__())
+
+
+class RecoveringPassword(Resource):
+    @staticmethod
+    def post():
+        try:
+            HandleLogs.write_log("Recuperar Password")
+            rq_json = request.get_json()
+            new_request = RecoveringPasswordSchema()
+            error = new_request.validate(rq_json)
+            if error:
+                HandleLogs.write_error("Error al Validar el Request -> " + str(error))
+                return response_error("Error al Validar el Request -> " + str(error))
+            # LLamar al metodo del componente
+            answer = UserComponent.RecoverPassword(rq_json['user_mail'])
+            if answer['result'] is True:
+                return response_success(answer['data'])
+            else:
+                return response_error(answer['message'])
+        except Exception as err:
+            HandleLogs.write_error(err)
+            return response_error(err.__str__())
+
+
+class EmailPasswordUpdate(Resource):
+    @staticmethod
+    def patch():
+        try:
+            HandleLogs.write_log("Actualizar Password por Email")
+            rq_json = request.get_json()
+            new_request = UpdatePasswordSchema()
+            error = new_request.validate(rq_json)
+            if error:
+                HandleLogs.write_error("Error al Validar el Request -> " + str(error))
+                return response_error("Error al Validar el Request -> " + str(error))
+            # LLamar al metodo del componente
+            answer = UserComponent.EmailPasswordUpdate(rq_json['user_mail'], rq_json['user_password'])
+            if answer['result'] is True:
                 return response_success(answer['data'])
             else:
                 return response_error(answer['message'])
@@ -176,9 +233,10 @@ class UserListId(Resource):
     @staticmethod
     def get():
         try:
-            HandleLogs.write_log("Listado de Usuarios por Id")
+            HandleLogs.write_log("Buscar ID de Usuario")
             # Obtengo el token
             token = request.headers['tokenapp']
+
             if token is None:
                 return response_error("Error: No se ha podido Obtener el Token")
 
@@ -186,66 +244,14 @@ class UserListId(Resource):
             token_valido = TokenComponent.Token_Validate(token)
             if not token_valido:
                 return response_unauthorize()
-            user_token = TokenComponent.User(token)
+
+            user_name = TokenComponent.User(token)
             # LLamar al metodo del componente
-            answer = UserComponent.ListUserId(user_token)
-            if answer['result'] is True:
-                if answer['data'] is None or answer['data'] == 0:
-                    return response_not_found()
-                return response_success(answer['data'])
+            resultado = UserComponent.ListUserId(user_name)
+            if resultado['result']:
+                return response_success_personal(resultado['data'])
             else:
-                return response_error(answer['message'])
-        except Exception as err:
-            HandleLogs.write_error(err)
-
-
-class RecoveringPassword(Resource):
-    @staticmethod
-    def patch():
-        try:
-            HandleLogs.write_log("Actualizar Password Por Email")
-            rq_json = request.get_json()
-            new_request = RecoveringPasswordSchema()
-            error = new_request.validate(rq_json)
-            if error:
-                HandleLogs.write_error("Error al Validar el Request -> " + str(error))
-                return response_error("Error al Validar el Request -> " + str(error))
-            answer = UserComponent.UserMailPassword(rq_json["user_mail"])
-            HandleLogs.write_log(answer)
-            if answer['result'] is True:
-                if answer['data'] is None or answer['data'] == 0:
-                    return response_not_found()
-                return response_success_personal(answer['result'],answer['message'],answer['data'])
-            else:
-                return response_error(answer['message'])
-        except Exception as err:
-            HandleLogs.write_error(err)
-            return response_error(err.__str__())
-
-
-class EmailPasswordUpdate(Resource):
-    @staticmethod
-    def patch():
-        try:
-            HandleLogs.write_log("Actualizar Password Por Email")
-            rq_json = request.get_json()
-            new_request = UpdatePasswordSchema()
-            error = new_request.validate(rq_json)
-            if error:
-                HandleLogs.write_error("Error al Validar el Request -> " + str(error))
-                return response_error("Error al Validar el Request -> " + str(error))
-            print(rq_json["token_temp"])
-            mail_user = TokenComponent.Token_Validate_ResetPassword(rq_json["token_temp"])
-            if mail_user is None:
-                return response_error("Error: No se ha podido Validar el Token")()
-            answer = UserComponent.UsePaswoedUpdateMail(rq_json["user_id"],rq_json["new_password"],mail_user)
-            HandleLogs.write_log(answer)
-            if answer['result'] is True:
-                if answer['data'] is None or answer['data'] == 0:
-                    return response_not_found()
-                return response_success(answer['data'])
-            else:
-                return response_error(answer['message'])
+                return response_error(resultado['message'])
         except Exception as err:
             HandleLogs.write_error(err)
             return response_error(err.__str__())
