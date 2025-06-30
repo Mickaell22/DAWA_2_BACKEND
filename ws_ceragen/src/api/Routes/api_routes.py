@@ -44,11 +44,61 @@ from ..Services.Audit.ErrorService import ErrorService
 from ..Services.Security.URCPService import urcpList,Updateurcp,Deleteurcp,Inserturcp
 from ..Services.Security.UserService import UserListId
 #-------------------------------------------------------------------------------
+<<<<<<< Updated upstream
+=======
+                        #RUTAS JHOEL
+#-------------------------------------------------------------------------------
+
+from ..Services.Admin.AdminTherapyService import (
+    AdminTherapyService_get,
+    AdminTherapyService_getbyid,
+    AdminTherapyService_add,
+    AdminTherapyService_update,
+    AdminTherapyService_delete
+)
+from ..Services.Admin.AdminProductService import (
+    AdminProductService_get,
+    AdminProductService_getbyid,
+    AdminProductService_add,
+    AdminProductService_update,
+    AdminProductService_delete
+)
+from ..Services.Admin.AdminPatientService import (
+    AdminPatientService_get,
+    AdminPatientService_getbyid,
+    AdminPatientService_add,
+    AdminPatientService_update,
+    AdminPatientService_delete
+
+)
+from ..Services.Admin.AdminClientService import (
+    AdminClientService_getbyid,
+    AdminClientService_add,
+    AdminClientService_update,
+    AdminClientService_delete,
+    AdminClientService_list
+)
+#-------------------------------------------------------------------------------
+>>>>>>> Stashed changes
 #user/insert
 #-------------------------------------------------------------------------------
 
 def load_routes(api):
 
+    # Ruta de Tabla Patient
+    api.add_resource(AdminPatientService_get, '/admin/patients/list')
+    api.add_resource(AdminPatientService_getbyid, '/admin/patients/list/<int:id>')
+    api.add_resource(AdminPatientService_add, '/admin/patients/add')
+    api.add_resource(AdminPatientService_update, '/admin/patients/update')
+    api.add_resource(AdminPatientService_delete, '/admin/patients/delete/<int:pat_id>/<string:user>')
+    # -------------------------------------------------------------------------------
+    # Ruta de Tabla Admin Client
+    api.add_resource(AdminClientService_list, '/admin/clients/list')
+    api.add_resource(AdminClientService_getbyid, '/admin/clients/<int:cli_id>')
+    api.add_resource(AdminClientService_add, '/admin/clients/add')
+    api.add_resource(AdminClientService_update, '/admin/clients/update')
+    api.add_resource(AdminClientService_delete, '/admin/clients/delete/<int:cli_id>/<string:user>')
+    # -------------------------------------------------------------------------------
     # Ruta de Tabla Person
     api.add_resource(AdminPersonService_get, '/admin/persons/list')   # List
     api.add_resource(AdminPersonService_getbyid, '/admin/persons/list/<int:id>')  # List for ID
