@@ -38,6 +38,25 @@ from ..Services.Admin.AdminMedicPersonTypeService import (admin_MedicPersonType_
                                                           admin_MedicPersonType_service_Update,
                                                           admin_MedicPersonType_service_Delete)
 
+
+from ..Services.Clinic.ClinicDiseaseTypeService import (clinic_DiseaseType_service_get,
+                                                        clinic_DiseaseType_getbyid,
+                                                        clinic_DiseaseType_service_add,
+                                                        clinic_DiseaseType_service_Update,
+                                                        clinic_DiseaseType_service_Delete)
+
+from ..Services.Clinic.ClinicDiseaseCatalogService import (clinic_DiseaseCatalog_service_get,
+                                                           clinic_DiseaseCatalog_service_getbyid,
+                                                           clinic_DiseaseCatalog_service_add,
+                                                           clinic_DiseaseCatalog_service_update,
+                                                           clinic_DiseaseCatalog_service_delete)
+
+from ..Services.Clinic.ClinicAllergyCatalogService import (clinic_AllergyCatalog_service_get,
+                                                           clinic_AllergyCatalog_service_getbyid,
+                                                           clinic_AllergyCatalog_service_add,
+                                                           clinic_AllergyCatalog_service_Update,
+                                                           clinic_AllergyCatalog_service_Delete)
+
 from ..Services.Security.LoginService import LoginService
 from ..Services.Security.LogoutService import LogoutService
 from ..Services.Security.UserService import UserService, UserInsert, UserDelete, UserUpdate,UserpasswordUpdate,RecoveringPassword,EmailPasswordUpdate
@@ -137,6 +156,27 @@ def load_routes(api):
     api.add_resource(admin_MedicPersonType_service_add, '/admin/MedicPersonType/add')
     api.add_resource(admin_MedicPersonType_service_Update, '/admin/MedicPersonType/update')
     api.add_resource(admin_MedicPersonType_service_Delete, '/admin/MedicPersonType/delete/<int:id>/<string:user>')
+
+    # Rutas de Tabla Disease Type
+    api.add_resource(clinic_DiseaseType_service_get, '/clinic/DiseaseType/list')
+    api.add_resource(clinic_DiseaseType_getbyid, '/clinic/DiseaseType/list/<int:id>')
+    api.add_resource(clinic_DiseaseType_service_add, '/clinic/DiseaseType/add')
+    api.add_resource(clinic_DiseaseType_service_Update, '/clinic/DiseaseType/update')
+    api.add_resource(clinic_DiseaseType_service_Delete, '/clinic/DiseaseType/delete/<int:id>/<string:user>')
+
+    # Rutas para el catálogo de enfermedades (clinic_disease_catalog)
+    api.add_resource(clinic_DiseaseCatalog_service_get, '/clinic/DiseaseCatalog/list')
+    api.add_resource(clinic_DiseaseCatalog_service_getbyid, '/clinic/DiseaseCatalog/list/<int:id>')
+    api.add_resource(clinic_DiseaseCatalog_service_add, '/clinic/DiseaseCatalog/add')
+    api.add_resource(clinic_DiseaseCatalog_service_update, '/clinic/DiseaseCatalog/update')
+    api.add_resource(clinic_DiseaseCatalog_service_delete, '/clinic/DiseaseCatalog/delete/<int:id>/<string:user>')
+
+    # Rutas para el catálogo de alergias (clinic_allergy_catalog)
+    api.add_resource(clinic_AllergyCatalog_service_get, '/clinic/AllergyCatalog/list')
+    api.add_resource(clinic_AllergyCatalog_service_getbyid, '/clinic/AllergyCatalog/list/<int:id>')
+    api.add_resource(clinic_AllergyCatalog_service_add, '/clinic/AllergyCatalog/add')
+    api.add_resource(clinic_AllergyCatalog_service_Update, '/clinic/AllergyCatalog/update')
+    api.add_resource(clinic_AllergyCatalog_service_Delete, '/clinic/AllergyCatalog/delete/<int:id>/<string:user>')
 
     #******* SECURITY PATH ******#
     #metodo para el login

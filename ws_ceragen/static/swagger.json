@@ -3717,6 +3717,558 @@
           }
         }
       }
+    },
+    "/clinic/DiseaseType/list": {
+      "get": {
+        "tags": ["Clínica"],
+        "summary": "Listar Tipos de Enfermedades",
+        "description": "Devuelve una lista de todos los tipos de enfermedades registradas.",
+        "operationId": "ListClinicDiseaseType",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "tokenapp",
+            "description": "Token para aplicación",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": { "description": "Operación exitosa", "schema": { "$ref": "#/definitions/Response" } },
+          "500": { "description": "Error", "schema": { "$ref": "#/definitions/ErrorResponse" } },
+          "400": { "description": "Not Found", "schema": { "$ref": "#/definitions/NotFound" } }
+        }
+      }
+    },
+    "/clinic/DiseaseType/list/{id}": {
+      "get": {
+        "tags": ["Clínica"],
+        "summary": "Obtener Tipo de Enfermedad por ID",
+        "description": "Obtiene un tipo de enfermedad por su identificador.",
+        "operationId": "GetClinicDiseaseTypeById",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "tokenapp",
+            "description": "Token para aplicación",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID del tipo de enfermedad",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": { "description": "Operación exitosa", "schema": { "$ref": "#/definitions/Response" } },
+          "500": { "description": "Error", "schema": { "$ref": "#/definitions/ErrorResponse" } },
+          "400": { "description": "Not Found", "schema": { "$ref": "#/definitions/NotFound" } }
+        }
+      }
+    },
+
+    "/clinic/DiseaseType/add": {
+      "post": {
+        "tags": ["Clínica"],
+        "summary": "Agregar Tipo de Enfermedad",
+        "description": "Agrega un nuevo tipo de enfermedad.",
+        "operationId": "AddClinicDiseaseType",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "tokenapp",
+            "description": "Token para aplicación",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Datos del nuevo tipo de enfermedad",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/insert_clinic_disease_type"
+            }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Operación exitosa", "schema": { "$ref": "#/definitions/Response" } },
+          "500": { "description": "Error", "schema": { "$ref": "#/definitions/ErrorResponse" } },
+          "400": { "description": "Not Found", "schema": { "$ref": "#/definitions/NotFound" } }
+        }
+      }
+    },
+
+    "/clinic/DiseaseType/update": {
+      "patch": {
+        "tags": ["Clínica"],
+        "summary": "Actualizar Tipo de Enfermedad",
+        "description": "Actualiza un tipo de enfermedad existente.",
+        "operationId": "UpdateClinicDiseaseType",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "tokenapp",
+            "description": "Token para aplicación",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Datos del tipo de enfermedad a actualizar",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/update_clinic_disease_type"
+            }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Operación exitosa", "schema": { "$ref": "#/definitions/Response" } },
+          "500": { "description": "Error", "schema": { "$ref": "#/definitions/ErrorResponse" } },
+          "400": { "description": "Not Found", "schema": { "$ref": "#/definitions/NotFound" } }
+        }
+      }
+    },
+
+    "/clinic/DiseaseType/delete/{id}/{user}": {
+      "delete": {
+        "tags": ["Clínica"],
+        "summary": "Eliminar Tipo de Enfermedad por ID",
+        "description": "Elimina un tipo de enfermedad usando su ID.",
+        "operationId": "DeleteClinicDiseaseType",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "tokenapp",
+            "description": "Token para aplicación",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID del tipo de enfermedad a eliminar",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "user",
+            "in": "path",
+            "description": "Usuario que realiza la eliminación",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": { "description": "Operación exitosa", "schema": { "$ref": "#/definitions/Response" } },
+          "500": { "description": "Error", "schema": { "$ref": "#/definitions/ErrorResponse" } },
+          "400": { "description": "Not Found", "schema": { "$ref": "#/definitions/NotFound" } }
+        }
+      }
+    },
+    "/clinic/DiseaseCatalog/list": {
+      "get": {
+        "tags": ["Clínica"],
+        "summary": "Listar Catálogo de Enfermedades",
+        "description": "Devuelve una lista de todas las enfermedades registradas en el catálogo.",
+        "operationId": "ListClinicDiseaseCatalog",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "tokenapp",
+            "description": "Token para aplicación",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operación exitosa",
+            "schema": { "$ref": "#/definitions/Response" }
+          },
+          "500": {
+            "description": "Error",
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
+          },
+          "400": {
+            "description": "Not Found",
+            "schema": { "$ref": "#/definitions/NotFound" }
+          }
+        }
+      }
+    },
+    "/clinic/DiseaseCatalog/list/{id}": {
+      "get": {
+        "tags": ["Clínica"],
+        "summary": "Obtener Enfermedad por ID",
+        "description": "Obtiene una enfermedad del catálogo por su identificador.",
+        "operationId": "GetClinicDiseaseById",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "tokenapp",
+            "description": "Token para aplicación",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID de la enfermedad",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operación exitosa",
+            "schema": { "$ref": "#/definitions/Response" }
+          },
+          "500": {
+            "description": "Error",
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
+          },
+          "400": {
+            "description": "Not Found",
+            "schema": { "$ref": "#/definitions/NotFound" }
+          }
+        }
+      }
+    },
+    "/clinic/DiseaseCatalog/add": {
+      "post": {
+        "tags": ["Clínica"],
+        "summary": "Agregar Enfermedad al Catálogo",
+        "description": "Agrega una nueva enfermedad al catálogo clínico.",
+        "operationId": "AddClinicDisease",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "tokenapp",
+            "description": "Token para aplicación",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Datos de la enfermedad a agregar",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/insert_clinic_disease"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operación exitosa",
+            "schema": { "$ref": "#/definitions/Response" }
+          },
+          "500": {
+            "description": "Error",
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
+          },
+          "400": {
+            "description": "Not Found",
+            "schema": { "$ref": "#/definitions/NotFound" }
+          }
+        }
+      }
+    },
+    "/clinic/DiseaseCatalog/update": {
+      "patch": {
+        "tags": ["Clínica"],
+        "summary": "Actualizar Enfermedad del Catálogo",
+        "description": "Actualiza los datos de una enfermedad registrada en el catálogo.",
+        "operationId": "UpdateClinicDisease",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "tokenapp",
+            "description": "Token para aplicación",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Datos de la enfermedad a actualizar",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/update_clinic_disease"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operación exitosa",
+            "schema": { "$ref": "#/definitions/Response" }
+          },
+          "500": {
+            "description": "Error",
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
+          },
+          "400": {
+            "description": "Not Found",
+            "schema": { "$ref": "#/definitions/NotFound" }
+          }
+        }
+      }
+    },
+    "/clinic/DiseaseCatalog/delete/{id}/{user}": {
+      "delete": {
+        "tags": ["Clínica"],
+        "summary": "Eliminar Enfermedad del Catálogo por ID",
+        "description": "Elimina una enfermedad del catálogo usando su ID.",
+        "operationId": "DeleteClinicDisease",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "tokenapp",
+            "description": "Token para aplicación",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID de la enfermedad a eliminar",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "user",
+            "in": "path",
+            "description": "Usuario que realiza la eliminación",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operación exitosa",
+            "schema": { "$ref": "#/definitions/Response" }
+          },
+          "500": {
+            "description": "Error",
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
+          },
+          "400": {
+            "description": "Not Found",
+            "schema": { "$ref": "#/definitions/NotFound" }
+          }
+        }
+      }
+    },
+    "/clinic/AllergyCatalog/list": {
+    "get": {
+      "tags": ["Administrador"],
+      "summary": "Listar Alergias",
+      "description": "Devuelve una lista de todas las alergias registradas.",
+      "operationId": "ListAllergyCatalog",
+      "produces": ["application/json"],
+      "parameters": [
+        {
+          "in": "header",
+          "name": "tokenapp",
+          "description": "Token de autenticación",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Operación exitosa",
+          "schema": { "$ref": "#/definitions/Response" }
+        },
+        "400": {
+          "description": "No encontrado",
+          "schema": { "$ref": "#/definitions/NotFound" }
+        },
+        "500": {
+          "description": "Error interno del servidor",
+          "schema": { "$ref": "#/definitions/ErrorResponse" }
+        }
+      }
+    }
+  },
+
+    "/clinic/AllergyCatalog/list/{id}": {
+      "get": {
+        "tags": ["Administrador"],
+        "summary": "Obtener Alergia por ID",
+        "description": "Obtiene los detalles de una alergia por su identificador.",
+        "operationId": "GetAllergyCatalogById",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "tokenapp",
+            "description": "Token de autenticación",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID de la alergia",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operación exitosa",
+            "schema": { "$ref": "#/definitions/Response" }
+          },
+          "400": {
+            "description": "No encontrado",
+            "schema": { "$ref": "#/definitions/NotFound" }
+          },
+          "500": {
+            "description": "Error interno del servidor",
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
+          }
+        }
+      }
+    },
+
+    "/clinic/AllergyCatalog/add": {
+      "post": {
+        "tags": ["Administrador"],
+        "summary": "Agregar nueva Alergia",
+        "description": "Agrega un nuevo registro de alergia al catálogo.",
+        "operationId": "AddAllergyCatalog",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "tokenapp",
+            "description": "Token de autenticación",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Datos de la alergia a registrar",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/insert_clinic_allergy"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Alergia agregada correctamente",
+            "schema": { "$ref": "#/definitions/Response" }
+          },
+          "400": {
+            "description": "Error de validación o datos no encontrados",
+            "schema": { "$ref": "#/definitions/NotFound" }
+          },
+          "500": {
+            "description": "Error interno del servidor",
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
+          }
+        }
+      }
+    },
+
+    "/clinic/AllergyCatalog/update": {
+      "patch": {
+        "tags": ["Administrador"],
+        "summary": "Actualizar Alergia",
+        "description": "Actualiza la información de una alergia existente.",
+        "operationId": "UpdateAllergyCatalog",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "tokenapp",
+            "description": "Token de autenticación",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Datos actualizados de la alergia",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/update_clinic_allergy"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Alergia actualizada correctamente",
+            "schema": { "$ref": "#/definitions/Response" }
+          },
+          "400": {
+            "description": "Error de validación o no encontrado",
+            "schema": { "$ref": "#/definitions/NotFound" }
+          },
+          "500": {
+            "description": "Error interno del servidor",
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
+          }
+        }
+      }
+    },
+
+    "/clinic/AllergyCatalog/delete/{id}/{user}": {
+      "delete": {
+        "tags": ["Administrador"],
+        "summary": "Eliminar Alergia",
+        "description": "Elimina lógicamente una alergia del catálogo.",
+        "operationId": "DeleteAllergyCatalog",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "tokenapp",
+            "description": "Token de autenticación",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID de la alergia a eliminar",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "user",
+            "in": "path",
+            "description": "Usuario que realiza la eliminación",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Alergia eliminada correctamente",
+            "schema": { "$ref": "#/definitions/Response" }
+          },
+          "400": {
+            "description": "No encontrado o ya eliminado",
+            "schema": { "$ref": "#/definitions/NotFound" }
+          },
+          "500": {
+            "description": "Error interno del servidor",
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -3976,6 +4528,134 @@
       }
     },
     "required": ["mpt_id", "mpt_name", "mpt_description", "user_process"]
+  },
+    "insert_clinic_disease_type": {
+      "type": "object",
+      "required": ["dst_name", "dst_description", "user_process"],
+      "properties": {
+        "dst_name": { "type": "string" },
+        "dst_description": { "type": "string" },
+        "user_process": { "type": "string" }
+      }
+    },
+    "update_clinic_disease_type": {
+      "type": "object",
+      "required": ["dst_id", "dst_name", "dst_description", "user_process"],
+      "properties": {
+        "dst_id": { "type": "integer", "format": "int64" },
+        "dst_name": { "type": "string" },
+        "dst_description": { "type": "string" },
+        "user_process": { "type": "string" }
+      }
+    },
+
+    "insert_clinic_disease": {
+      "type": "object",
+      "required": [
+        "dis_name",
+        "dis_description",
+        "dis_type_id",
+        "user_process"
+      ],
+      "properties": {
+        "dis_name": {
+          "type": "string",
+          "example": "Gripe"
+        },
+        "dis_description": {
+          "type": "string",
+          "example": "Infección viral respiratoria"
+        },
+        "dis_type_id": {
+          "type": "integer",
+          "example": 1
+        },
+        "user_process": {
+          "type": "string",
+          "example": "admin_user"
+        }
+      }
+    },
+
+    "update_clinic_disease": {
+      "type": "object",
+      "required": [
+        "dis_id",
+        "dis_name",
+        "dis_description",
+        "dis_type_id",
+        "user_process"
+      ],
+      "properties": {
+        "dis_id": {
+          "type": "integer",
+          "example": 123
+        },
+        "dis_name": {
+          "type": "string",
+          "example": "Gripe"
+        },
+        "dis_description": {
+          "type": "string",
+          "example": "Infección viral respiratoria"
+        },
+        "dis_type_id": {
+          "type": "integer",
+          "example": 1
+        },
+        "user_process": {
+          "type": "string",
+          "example": "admin_user"
+        }
+      }
+    },
+    "insert_clinic_allergy": {
+    "type": "object",
+    "required": ["all_name", "all_description", "all_type_id", "user_process"],
+    "properties": {
+      "all_name": {
+        "type": "string",
+        "example": "Alergia al polen"
+      },
+      "all_description": {
+        "type": "string",
+        "example": "Reacción alérgica al polen de árboles y plantas"
+      },
+      "all_type_id": {
+        "type": "integer",
+        "example": 1
+      },
+      "user_process": {
+        "type": "string",
+        "example": "admin"
+      }
+    }
+  },
+  "update_clinic_allergy": {
+    "type": "object",
+    "required": ["all_id", "all_name", "all_description", "all_type_id", "user_process"],
+    "properties": {
+      "all_id": {
+        "type": "integer",
+        "example": 5
+      },
+      "all_name": {
+        "type": "string",
+        "example": "Alergia al polen"
+      },
+      "all_description": {
+        "type": "string",
+        "example": "Reacción alérgica al polen de árboles y plantas"
+      },
+      "all_type_id": {
+        "type": "integer",
+        "example": 1
+      },
+      "user_process": {
+        "type": "string",
+        "example": "admin"
+      }
+    }
   },
 
     "up_useRol": {
