@@ -92,6 +92,21 @@ from ..Services.Admin.AdminProductService import (
     AdminProductService_update,
     AdminProductService_delete
 )
+from ..Services.Admin.AdminPatientService import (
+    AdminPatientService_get,
+    AdminPatientService_getbyid,
+    AdminPatientService_add,
+    AdminPatientService_update,
+    AdminPatientService_delete
+
+)
+from ..Services.Admin.AdminClientService import (
+    AdminClientService_getbyid,
+    AdminClientService_add,
+    AdminClientService_update,
+    AdminClientService_delete,
+    AdminClientService_list
+)
 #-------------------------------------------------------------------------------
 #user/insert
 #-------------------------------------------------------------------------------
@@ -100,6 +115,21 @@ def load_routes(api):
     # -------------------------------------------------------------------------------
     # user/insert
     # -------------------------------------------------------------------------------
+    # Ruta de Tabla Patient
+    api.add_resource(AdminPatientService_get, '/admin/patients/list')
+    api.add_resource(AdminPatientService_getbyid, '/admin/patients/list/<int:id>')
+    api.add_resource(AdminPatientService_add, '/admin/patients/add')
+    api.add_resource(AdminPatientService_update, '/admin/patients/update')
+    api.add_resource(AdminPatientService_delete, '/admin/patients/delete/<int:pat_id>/<string:user>')
+    # -------------------------------------------------------------------------------
+    # Ruta de Tabla Admin Client
+    api.add_resource(AdminClientService_list, '/admin/clients/list')
+    api.add_resource(AdminClientService_getbyid, '/admin/clients/<int:cli_id>')
+    api.add_resource(AdminClientService_add, '/admin/clients/add')
+    api.add_resource(AdminClientService_update, '/admin/clients/update')
+    api.add_resource(AdminClientService_delete, '/admin/clients/delete/<int:cli_id>/<string:user>')
+    # -------------------------------------------------------------------------------
+
     # Ruta de Tabla Therapy Type
     api.add_resource(AdminTherapyService_get, '/admin/therapy-type/list')  # List
     api.add_resource(AdminTherapyService_getbyid, '/admin/therapy-type/list/<int:tht_id>')  # List for ID
