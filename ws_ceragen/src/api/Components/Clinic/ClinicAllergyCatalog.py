@@ -8,11 +8,11 @@ class ClinicAllergyCatalog_Component:
     def ListAllAllergyCatalog():
         try:
             query = (
-                "SELECT alc_id, alc_name, alc_description, alc_type_id, alc_state, user_created, "
+                "SELECT al_id, al_name, al_description, al_state, user_created, "
                 "to_char(date_created, 'DD/MM/YYYY HH24:MI:SS') as date_created, "
                 "user_modified, to_char(date_modified, 'DD/MM/YYYY HH24:MI:SS') as date_modified, "
                 "user_deleted, to_char(date_deleted, 'DD/MM/YYYY HH24:MI:SS') as date_deleted "
-                "FROM ceragen.clinic_allergy_catalog WHERE alc_state = true"
+                "FROM ceragen.clinic_allergy_catalog WHERE al_state = true"
             )
             res = DataBaseHandle.getRecords(query, 0)
             return res
@@ -24,11 +24,11 @@ class ClinicAllergyCatalog_Component:
     def GetByIdAllergyCatalog(id):
         try:
             query = (
-                "SELECT alc_id, alc_name, alc_description, alc_type_id, alc_state, user_created, "
+                "SELECT al_id, al_name, al_description, al_state, user_created, "
                 "to_char(date_created, 'DD/MM/YYYY HH24:MI:SS') as date_created, "
                 "user_modified, to_char(date_modified, 'DD/MM/YYYY HH24:MI:SS') as date_modified, "
                 "user_deleted, to_char(date_deleted, 'DD/MM/YYYY HH24:MI:SS') as date_deleted "
-                "FROM ceragen.clinic_allergy_catalog WHERE alc_id = %s"
+                "FROM ceragen.clinic_allergy_catalog WHERE al_id = %s"
             )
             record = (id,)
             return DataBaseHandle.getRecords(query, 1, record)
@@ -41,13 +41,12 @@ class ClinicAllergyCatalog_Component:
         try:
             sql = (
                 "INSERT INTO ceragen.clinic_allergy_catalog "
-                "(alc_name, alc_description, alc_type_id, alc_state, user_created, date_created) "
-                "VALUES (%s, %s, %s, %s, %s, %s)"
+                "(al_name, al_description, al_state, user_created, date_created) "
+                "VALUES (%s, %s, %s, %s, %s)"
             )
             record = (
-                data_to_insert['alc_name'],
-                data_to_insert['alc_description'],
-                data_to_insert['alc_type_id'],
+                data_to_insert['al_name'],
+                data_to_insert['al_description'],
                 True,
                 data_to_insert['user_process'],
                 datetime.now()
@@ -63,17 +62,16 @@ class ClinicAllergyCatalog_Component:
         try:
             sql = (
                 "UPDATE ceragen.clinic_allergy_catalog SET "
-                "alc_name = %s, alc_description = %s, alc_type_id = %s, "
+                "al_name = %s, al_description = %s, "
                 "user_modified = %s, date_modified = %s "
-                "WHERE alc_id = %s"
+                "WHERE al_id = %s"
             )
             record = (
-                data_to_update['alc_name'],
-                data_to_update['alc_description'],
-                data_to_update['alc_type_id'],
+                data_to_update['al_name'],
+                data_to_update['al_description'],
                 data_to_update['user_process'],
                 datetime.now(),
-                data_to_update['alc_id']
+                data_to_update['al_id']
             )
             result = DataBaseHandle.ExecuteNonQuery(sql, record)
             return internal_response(result is not None, None if result else "Error al actualizar", result)
@@ -86,8 +84,8 @@ class ClinicAllergyCatalog_Component:
         try:
             query = (
                 "UPDATE ceragen.clinic_allergy_catalog SET "
-                "alc_state = false, user_deleted = %s, date_deleted = %s "
-                "WHERE alc_id = %s"
+                "al_state = false, user_deleted = %s, date_deleted = %s "
+                "WHERE al_id = %s"
             )
             record = (user, datetime.now(), id)
             result = DataBaseHandle.ExecuteNonQuery(query, record)

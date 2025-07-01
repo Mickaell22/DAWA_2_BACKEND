@@ -4633,7 +4633,7 @@
   },
   "update_clinic_allergy": {
     "type": "object",
-    "required": ["all_id", "all_name", "all_description", "all_type_id", "user_process"],
+    "required": ["all_id", "all_name", "all_description", "user_process"],
     "properties": {
       "all_id": {
         "type": "integer",
@@ -4646,10 +4646,6 @@
       "all_description": {
         "type": "string",
         "example": "Reacción alérgica al polen de árboles y plantas"
-      },
-      "all_type_id": {
-        "type": "integer",
-        "example": 1
       },
       "user_process": {
         "type": "string",
