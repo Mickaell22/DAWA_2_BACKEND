@@ -61,13 +61,15 @@ class AdminPromotionComponent:
                 INSERT INTO ceragen.admin_product_promotion
                 (ppr_product_id, ppr_name, ppr_description, ppr_discount_percent, ppr_extra_sessions,
                  ppr_start_date, ppr_end_date, ppr_state, user_created, date_created)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, true, %s, now())
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, now())
                 RETURNING ppr_id
             """
             params = (
                 data['ppr_product_id'], data['ppr_name'], data.get('ppr_description', ''),
                 data['ppr_discount_percent'], data['ppr_extra_sessions'],
-                data['ppr_start_date'], data['ppr_end_date'], data['user_created']
+                data['ppr_start_date'], data['ppr_end_date'],
+                data['ppr_state'],  # <-- AGREGADO
+                data['user_created']
             )
             print("DEBUG - Insertando promoción con params:", params)
             result = DataBaseHandle.execute(sql, params)
