@@ -1,6 +1,14 @@
 
 
 #----------- MÓDULO ADMINISTRADOR ----------------------------
+# ...existing code...
+from ..Services.Admin.AdminPatientMedicalHistoryService import (
+    AdminPatientMedicalHistoryService_get,
+    AdminPatientMedicalHistoryService_getbyid,
+    AdminPatientMedicalHistoryService_add,
+    AdminPatientMedicalHistoryService_update,
+    AdminPatientMedicalHistoryService_delete
+)
 
 from ..Services.Admin.AdminPersonService import (AdminPersonService_get,
                                                  AdminPersonService_getbyid,
@@ -143,6 +151,12 @@ def load_routes(api):
     api.add_resource(AdminProductService_update, '/admin/products/update')
     api.add_resource(AdminProductService_delete, '/admin/products/delete/<int:pro_id>/<string:user>')
 
+    api.add_resource(AdminPatientMedicalHistoryService_get, '/admin/patient-medical-history/list')
+    api.add_resource(AdminPatientMedicalHistoryService_getbyid, '/admin/patient-medical-history/list/<int:hist_id>')
+    api.add_resource(AdminPatientMedicalHistoryService_add, '/admin/patient-medical-history/add')
+    api.add_resource(AdminPatientMedicalHistoryService_update, '/admin/patient-medical-history/update')
+    api.add_resource(AdminPatientMedicalHistoryService_delete,
+                     '/admin/patient-medical-history/delete/<int:hist_id>/<string:user>')
     # -------------------------------------------------------------------------------
 
     # Ruta de Tabla Person
