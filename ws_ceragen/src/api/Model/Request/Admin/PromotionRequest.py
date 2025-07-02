@@ -8,6 +8,7 @@ class PromotionInsertRequest(Schema):
     ppr_extra_sessions = fields.Int(required=True)
     ppr_start_date = fields.Date(required=True)
     ppr_end_date = fields.Date(required=True)
+    ppr_state = fields.Boolean(required=True)  # <-- AGREGADO
     user_created = fields.String(required=True)
 
     def validate(self, data):
