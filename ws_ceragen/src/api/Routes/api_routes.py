@@ -100,6 +100,13 @@ from ..Services.Admin.AdminPatientService import (
     AdminPatientService_delete
 
 )
+from ..Services.Admin.AdminPromotionService import (
+    AdminPromotionService_get,
+    AdminPromotionService_getbyid,
+    AdminPromotionService_add,
+    AdminPromotionService_update,
+    AdminPromotionService_delete
+)
 from ..Services.Admin.AdminClientService import (
     AdminClientService_getbyid,
     AdminClientService_add,
@@ -142,6 +149,13 @@ def load_routes(api):
     api.add_resource(AdminProductService_add, '/admin/products/add')
     api.add_resource(AdminProductService_update, '/admin/products/update')
     api.add_resource(AdminProductService_delete, '/admin/products/delete/<int:pro_id>/<string:user>')
+    # Ruta de Tabla Promotion
+    api.add_resource(AdminPromotionService_get, '/admin/promotions')
+    api.add_resource(AdminPromotionService_getbyid, '/admin/promotions/<int:ppr_id>')
+    api.add_resource(AdminPromotionService_add, '/admin/promotions/add')
+    api.add_resource(AdminPromotionService_update, '/admin/promotions/update')
+    api.add_resource(AdminPromotionService_delete, '/admin/promotions/delete/<int:ppr_id>/<string:user>')
+
 
     # -------------------------------------------------------------------------------
 
