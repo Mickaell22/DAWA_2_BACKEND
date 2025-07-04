@@ -2,11 +2,14 @@
 
 #----------- MÓDULO ADMINISTRADOR ----------------------------
 
-from ..Services.Admin.AdminPersonService import (AdminPersonService_get,
-                                                 AdminPersonService_getbyid,
-                                                 admin_Person_service_add,
-                                                 admin_Person_service_Update,
-                                                 admin_person_service_Delete)
+from ..Services.Admin.AdminPersonService import (
+    AdminPersonService_get,
+    AdminPersonService_getbyid,
+    admin_Person_service_add,
+    admin_Person_service_Update,
+    admin_person_service_Delete,
+    AdminPersonService_statistics # <--- NUEVO
+)
 
 
 from ..Services.Admin.AdminMaritalStatusservice import (MaritalStatus_get,
@@ -165,6 +168,7 @@ def load_routes(api):
     api.add_resource(admin_Person_service_add, '/admin/persons/add')   # Add
     api.add_resource(admin_Person_service_Update, '/admin/persons/update')   # Update
     api.add_resource(admin_person_service_Delete, '/admin/persons/delete/<int:per_id>/<string:user>')  # Delete
+    api.add_resource(AdminPersonService_statistics, '/admin/persons/statistics')
 
     # Ruta de Tabla Marital Status
     api.add_resource(MaritalStatus_get, '/admin/Marital_status/list')   # List
