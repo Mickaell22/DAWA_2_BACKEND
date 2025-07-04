@@ -3,6 +3,7 @@ from ....utils.database.connection_db import DataBaseHandle
 from datetime import datetime
 from ....utils.general.logs import HandleLogs
 from ....utils.general.response import internal_response
+from datetime import datetime, timedelta
 
 class AdminPersonComponent:
     @staticmethod
@@ -118,4 +119,44 @@ class AdminPersonComponent:
         except Exception as err:
             HandleLogs.write_error(err)
             return None
+
+    @staticmethod
+    def get_person_statistics():
+        try:
+            # Fechas límite para semana, mes y año
+            today = datetime.now()
+            start_week = (today - timedelta(days=today.weekday())).replace(hour=0, minute=0, second=0, microsecond=0)
+            start_month = today.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+            start_year = today.replace(month=1, day=1, hour=0, minute=0, second=0, microsecond=0)
+
+            query = """
+                    SELECT
+                        COUNT(*) FILTER (WHERE date_created >= %s) AS week,
+                        COUNT(*) FILTER (WHERE date_created >= %s) AS month,
+                        COUNT(*) FILTER (WHERE date_created >= %s) AS year
+                    FROM ceragen.admin_person
+                    WHERE per_state = TRUE;
+                """
+
+            params = (start_week, start_month, start_year)
+            result = DataBaseHandle.getRecords(query, 1, params)
+            if result and isinstance(result, dict):
+                return {
+                    "week": result.get('week', 0),
+                    "month": result.get('month', 0),
+                    "year": result.get('year', 0)
+                }
+            # Si el resultado es una lista con un dict
+            elif result and isinstance(result, list) and isinstance(result[0], dict):
+                d = result[0]
+                return {
+                    "week": d.get('week', 0),
+                    "month": d.get('month', 0),
+                    "year": d.get('year', 0)
+                }
+            else:
+                return {"week": 0, "month": 0, "year": 0}
+        except Exception as err:
+            HandleLogs.write_error(err)
+            return {"week": 0, "month": 0, "year": 0}
 

@@ -145,3 +145,26 @@ class admin_person_service_Delete(Resource):
         except Exception as err:
             HandleLogs.write_error(err)
             return response_error(err.__str__())
+
+class AdminPersonService_statistics(Resource):
+    @staticmethod
+    def get():
+        try:
+            token = request.headers.get('tokenapp')
+            if token is None:
+                return response_error("Error: No se ha podido Obtener el Token")
+            token_valido = TokenComponent.Token_Validate(token)
+            if not token_valido:
+                return response_unauthorize()
+
+            stats = AdminPersonComponent.get_person_statistics()
+            print("TYPE OF stats:", type(stats), stats)
+            print(type(stats), stats)
+            print("DEBUG STATS TYPE:", type(stats), stats)
+            if stats:
+                return response_success(stats)
+            else:
+                return response_error("No se pudieron calcular las estadísticas")
+        except Exception as err:
+            HandleLogs.write_error(err)
+            return response_error(str(err))
