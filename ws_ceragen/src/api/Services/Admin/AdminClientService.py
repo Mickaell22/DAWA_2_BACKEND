@@ -18,6 +18,7 @@ def serialize_datetime(obj):
     else:
         return obj
 
+
 class AdminClientService_list(Resource):
     @staticmethod
     def get():
@@ -28,18 +29,35 @@ class AdminClientService_list(Resource):
             token_valido = TokenComponent.Token_Validate(token)
             if not token_valido:
                 return response_unauthorize()
-            # Solo selecciona los campos necesarios para el frontend
+
+            # 🔥 QUERY MEJORADO: más campos + JOIN con personas
             query = """
-                SELECT cli_id, cli_name, cli_identification, cli_state
-                FROM ceragen.admin_client
-                WHERE cli_state = TRUE
-            """
+                    SELECT c.cli_id, \
+                           c.cli_person_id, \
+                           c.cli_identification, \
+                           c.cli_name, \
+                           c.cli_address_bill, \
+                           c.cli_mail_bill, \
+                           c.cli_state, \
+                           c.user_created, \
+                           c.date_created, \
+                           c.user_modified, \
+                           c.date_modified, \
+                           p.per_names, \
+                           p.per_surnames, \
+                           p.per_identification as person_identification
+                    FROM ceragen.admin_client c
+                             LEFT JOIN ceragen.admin_person p ON c.cli_person_id = p.per_id
+                    WHERE c.cli_state = TRUE
+                    ORDER BY c.date_created DESC \
+                    """
             clients = DataBaseHandle.getRecords(query, 0)
             clients = serialize_datetime(clients)
             return response_success(clients)
         except Exception as err:
             HandleLogs.write_error(err)
             return response_error(str(err))
+
 
 class AdminClientService_getbyid(Resource):
     @staticmethod
@@ -51,13 +69,16 @@ class AdminClientService_getbyid(Resource):
             token_valido = TokenComponent.Token_Validate(token)
             if not token_valido:
                 return response_unauthorize()
+
             query = """
                 SELECT cli_id, cli_name, cli_identification, cli_state
                 FROM ceragen.admin_client
                 WHERE cli_id = %s
             """
-            client = DataBaseHandle.getRecord(query, (cli_id,))
+            # 🔸 USAR getRecord correctamente: (query, tamaño, record)
+            client = DataBaseHandle.getRecord(query, 1, (cli_id,))
             client = serialize_datetime(client)
+
             if client:
                 return response_success(client)
             else:
@@ -76,7 +97,10 @@ class AdminClientService_add(Resource):
             token_valido = TokenComponent.Token_Validate(token)
             if not token_valido:
                 return response_unauthorize()
+
             data = request.get_json()
+
+            # 🔸 USAR ExecuteInsert (método correcto en tu sistema)
             query = """
                 INSERT INTO ceragen.admin_client
                 (cli_person_id, cli_identification, cli_name, cli_address_bill, cli_mail_bill, cli_state, user_created, date_created)
@@ -92,11 +116,21 @@ class AdminClientService_add(Resource):
                 data.get('cli_state', True),
                 data.get('user_created')
             )
-            new_id = DataBaseHandle.insertRecord(query, params)
-            return response_success({'cli_id': new_id})
+
+            # 🔸 CAMBIAR A ExecuteInsert
+            resultado = DataBaseHandle.ExecuteInsert(query, params)
+
+            if resultado['result']:
+                # El resultado viene en formato [{'cli_id': X}]
+                new_id = resultado['data'][0]['cli_id']
+                return response_success({'cli_id': new_id})
+            else:
+                return response_error(resultado['message'] or "Error al crear cliente")
+
         except Exception as err:
             HandleLogs.write_error(err)
             return response_error(str(err))
+
 
 class AdminClientService_update(Resource):
     @staticmethod
@@ -108,10 +142,15 @@ class AdminClientService_update(Resource):
             token_valido = TokenComponent.Token_Validate(token)
             if not token_valido:
                 return response_unauthorize()
+
             data = request.get_json()
+
+            # 🔸 USAR ExecuteNonQuery (método correcto para UPDATE)
             query = """
                 UPDATE ceragen.admin_client
-                SET cli_person_id=%s, cli_identification=%s, cli_name=%s, cli_address_bill=%s, cli_mail_bill=%s, cli_state=%s, user_modified=%s, date_modified=NOW()
+                SET cli_person_id=%s, cli_identification=%s, cli_name=%s, 
+                    cli_address_bill=%s, cli_mail_bill=%s, cli_state=%s, 
+                    user_modified=%s, date_modified=NOW()
                 WHERE cli_id=%s
             """
             params = (
@@ -124,11 +163,19 @@ class AdminClientService_update(Resource):
                 data.get('user_modified'),
                 data.get('cli_id')
             )
-            DataBaseHandle.updateRecord(query, params)
-            return response_success("Cliente actualizado correctamente")
+
+            # 🔸 CAMBIAR A ExecuteNonQuery
+            resultado = DataBaseHandle.ExecuteNonQuery(query, params)
+
+            if resultado['result']:
+                return response_success("Cliente actualizado correctamente")
+            else:
+                return response_error(resultado['message'] or "Error al actualizar cliente")
+
         except Exception as err:
             HandleLogs.write_error(err)
             return response_error(str(err))
+
 
 class AdminClientService_delete(Resource):
     @staticmethod
@@ -140,14 +187,22 @@ class AdminClientService_delete(Resource):
             token_valido = TokenComponent.Token_Validate(token)
             if not token_valido:
                 return response_unauthorize()
+
+            # 🔸 USAR ExecuteNonQuery para UPDATE (soft delete)
             query = """
                 UPDATE ceragen.admin_client
                 SET cli_state=FALSE, user_deleted=%s, date_deleted=NOW()
                 WHERE cli_id=%s
             """
             params = (user, cli_id)
-            DataBaseHandle.updateRecord(query, params)
-            return response_success("Cliente eliminado correctamente")
+
+            resultado = DataBaseHandle.ExecuteNonQuery(query, params)
+
+            if resultado['result']:
+                return response_success("Cliente eliminado correctamente")
+            else:
+                return response_error(resultado['message'] or "Error al eliminar cliente")
+
         except Exception as err:
             HandleLogs.write_error(err)
             return response_error(str(err))
