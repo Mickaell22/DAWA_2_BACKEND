@@ -527,3 +527,119 @@ class UserComponent:
                 'message': message,
                 'data': data
             }
+
+    @staticmethod
+    def RecoverPassword(email):
+        """
+        Versión simplificada para testing - NO envía email real
+        Solo verifica que el usuario existe y retorna éxito
+        """
+        try:
+            HandleLogs.write_log(f'🔄 Recuperación de contraseña (modo test) para: {email}')
+            result = False
+            message = None
+            data = None
+
+            # 1️⃣ Verificar que el email existe en la base de datos
+            record = (email,)
+            sql = """SELECT user_login_id, user_mail
+                     FROM ceragen.segu_user
+                     WHERE user_mail = %s 
+                     AND user_state = true 
+                     AND user_locked = false;"""
+
+            answer = DataBaseHandle.getRecords(sql, 1, record)
+            HandleLogs.write_log(f'📋 Resultado verificación: {answer}')
+
+            if answer['result'] is True and answer['data'] is not None:
+                # ✅ Email existe
+                result = True
+                data = email
+                message = f"Enlace de recuperación enviado a {email}"
+
+                # 🧪 PARA TESTING: Mostrar en logs el token que se generaría
+                try:
+                    from ...Components.Security.TokenComponent import TokenComponent
+                    import base64
+
+                    token_temp = TokenComponent.Token_Generate_ResetPassword(email)
+                    token = base64.urlsafe_b64encode(token_temp.encode()).decode()
+                    reset_url = f"http://localhost:3000/auth/reset-password/{token}"
+
+                    HandleLogs.write_log(f"🔗 URL de recuperación (para testing): {reset_url}")
+
+                except Exception as token_err:
+                    HandleLogs.write_error(f"Error generando token de prueba: {token_err}")
+
+                HandleLogs.write_log(f'✅ Email {email} encontrado - recuperación simulada')
+
+            else:
+                # ❌ Email no existe
+                result = False
+                message = f"El correo {email} no se encuentra registrado"
+                HandleLogs.write_log(f'❌ Email {email} no encontrado')
+
+        except Exception as err:
+            HandleLogs.write_error(f'❌ Error en RecoverPassword: {err}')
+            result = False
+            message = f"Error interno del servidor"
+            data = None
+
+        finally:
+            return {
+                'result': result,
+                'message': message,
+                'data': data
+            }
+
+    @staticmethod
+    def EmailPasswordUpdate(user_mail, new_password):
+        """
+        Método para actualizar contraseña usando el email (para recuperación)
+        """
+        try:
+            import hashlib
+
+            HandleLogs.write_log(f'Actualizando contraseña para email: {user_mail}')
+
+            # Hash la nueva contraseña con MD5 (igual que en el login)
+            hashed_password = hashlib.md5(new_password.encode()).hexdigest()
+            HandleLogs.write_log(f'Nueva contraseña hasheada: {hashed_password}')
+
+            result = False
+            message = None
+            data = None
+
+            record = (hashed_password, 'system', user_mail)
+
+            sql = """UPDATE ceragen.segu_user
+                     SET user_password = %s,
+                         user_modified = %s,
+                         date_modified = timezone('America/Guayaquil', now())
+                     WHERE user_mail = %s
+                       AND user_locked = false
+                       AND user_state = true;"""
+
+            answer = DataBaseHandle.ExecuteNonQuery(sql, record)
+            HandleLogs.write_log(f'Resultado actualización: {answer}')
+
+            if answer['result'] is True:
+                result = True
+                data = answer['data']
+                message = "Contraseña actualizada exitosamente"
+                HandleLogs.write_log(f'✅ Contraseña actualizada para {user_mail}')
+            else:
+                message = answer['message'] or "Error al actualizar la contraseña"
+                HandleLogs.write_error(f'❌ Error actualizando contraseña: {message}')
+
+        except Exception as err:
+            HandleLogs.write_error(f'Error en EmailPasswordUpdate: {err}')
+            result = False
+            message = f"Error interno: {err.__str__()}"
+            data = None
+        finally:
+            return {
+                'result': result,
+                'message': message,
+                'data': data
+            }

@@ -124,27 +124,39 @@ class admin_Person_service_Update(Resource):
             return response_error(err.__str__())
 
     #eliminar
+
+
 class admin_person_service_Delete(Resource):
     @staticmethod
     def delete(per_id, user):
         try:
-            HandleLogs.write_log(f"Eliminar ciclo por ID: {per_id}")
+            HandleLogs.write_log(f"🗑️ Eliminando persona con ID: {per_id}")
+
+            # 🔐 Validar token
             token = request.headers['tokenapp']
             if token is None:
-                return response_error("Error: No se ha podido Obtener el Token")
+                return response_error("Error: No se ha podido obtener el Token")
+
             token_valido = TokenComponent.Token_Validate(token)
             if not token_valido:
                 return response_unauthorize()
+
+            # 🔍 Obtener usuario del token
             user_token = TokenComponent.User(token)
-            res = AdminPersonComponent.delete_admin_person(per_id, user_token)
-            #success, message = AdminCicleComponent.delete_admin_cicle(id)
-            if res:
-                return response_success(res)
+            HandleLogs.write_log(f"Usuario que elimina: {user_token}")
+
+            # 🗑️ Llamar al componente para eliminar
+            success, message = AdminPersonComponent.delete_admin_person(per_id, user_token)
+            HandleLogs.write_log(f"Resultado eliminación: success={success}, message={message}")
+
+            if success:
+                return response_success({"message": message, "per_id": per_id})
             else:
                 return response_not_found()
+
         except Exception as err:
-            HandleLogs.write_error(err)
-            return response_error(err.__str__())
+            HandleLogs.write_error(f"❌ Error en eliminación de persona: {err}")
+            return response_error(str(err))
 
 class AdminPersonService_statistics(Resource):
     @staticmethod

@@ -106,20 +106,35 @@ class AdminPersonComponent:
     @staticmethod
     def delete_admin_person(per_id, p_user):
         try:
+            HandleLogs.write_log(f"🗑️ Ejecutando eliminación lógica - ID: {per_id}, Usuario: {p_user}")
+
             query = "UPDATE ceragen.admin_person " \
-                     "SET per_state = false, user_deleted = %s, date_deleted = %s WHERE per_id = %s"
+                    "SET per_state = false, user_deleted = %s, date_deleted = %s WHERE per_id = %s"
             record = (p_user, datetime.now(), per_id)
-            rows_affected = DataBaseHandle.ExecuteNonQuery(query, record)
-            HandleLogs.write_log("Filas afectadas: " + str(rows_affected))
 
-            if rows_affected > 0:
-                return True, f"Registro con ID {per_id} eliminado exitosamente."
+            HandleLogs.write_log(f"SQL: {query}")
+            HandleLogs.write_log(f"Parámetros: {record}")
+
+            result = DataBaseHandle.ExecuteNonQuery(query, record)
+            HandleLogs.write_log(f"Resultado ExecuteNonQuery: {result}")
+
+            # 🔧 CORRECCIÓN: El método ExecuteNonQuery devuelve un dict, no un número
+            if result and result.get('result', False):
+                rows_affected = result.get('data', 0)
+                HandleLogs.write_log(f"✅ Filas afectadas: {rows_affected}")
+
+                if rows_affected > 0:
+                    return True, f"Registro con ID {per_id} eliminado exitosamente."
+                else:
+                    return False, f"No se encontró ningún registro con ID {per_id}."
             else:
-                return False, f"No se encontró ningún registro con ID {per_id}."
-        except Exception as err:
-            HandleLogs.write_error(err)
-            return None
+                error_msg = result.get('message', 'Error desconocido') if result else 'ExecuteNonQuery retornó None'
+                HandleLogs.write_error(f"❌ Error en ExecuteNonQuery: {error_msg}")
+                return False, f"Error al eliminar registro: {error_msg}"
 
+        except Exception as err:
+            HandleLogs.write_error(f"❌ Excepción en delete_admin_person: {err}")
+            return False, f"Error interno: {str(err)}"
     @staticmethod
     def get_person_statistics():
         try:
