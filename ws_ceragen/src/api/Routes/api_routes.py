@@ -125,6 +125,19 @@ from ..Services.Admin.AdminClientService import (
     AdminClientService_delete,
     AdminClientService_list
 )
+from ..Services.Admin.AdminAppointmentService import (
+    AdminAppointmentService_get,
+    AdminAppointmentService_getbyid,
+    AdminAppointmentService_schedule,
+    AdminAppointmentService_reschedule,
+    AdminAppointmentService_cancel,
+    AdminAppointmentService_execute,
+    AdminAppointmentService_availability,
+    AdminAppointmentService_calendar,
+    AdminAppointmentService_therapy_types,
+    AdminAppointmentService_medical_staff,
+    AdminAppointmentService_products
+)
 
 
 # -------------------------------------------------------------------------------
@@ -298,3 +311,27 @@ def load_routes(api):
     api.add_resource(Inserturcp, '/urcp/insert')
     api.add_resource(Updateurcp, '/urcp/update')
     api.add_resource(Deleteurcp, '/urcp/delete')
+
+    # Rutas principales de citas
+    api.add_resource(AdminAppointmentService_get, '/admin/appointments/list')  # GET - Lista todas las citas
+    api.add_resource(AdminAppointmentService_getbyid,
+                     '/admin/appointments/list/<int:appointment_id>')  # GET - Cita por ID
+    api.add_resource(AdminAppointmentService_schedule, '/admin/appointments/schedule')  # POST - Agendar nueva cita
+    api.add_resource(AdminAppointmentService_reschedule, '/admin/appointments/reschedule')  # PATCH - Reagendar cita
+    api.add_resource(AdminAppointmentService_cancel,
+                     '/admin/appointments/cancel/<int:appointment_id>')  # DELETE - Cancelar cita
+    api.add_resource(AdminAppointmentService_execute,
+                     '/admin/appointments/execute/<int:appointment_id>')  # PATCH - Marcar como ejecutada
+
+    # Rutas de disponibilidad y calendario
+    api.add_resource(AdminAppointmentService_availability,
+                     '/admin/appointments/availability')  # POST - Verificar disponibilidad
+    api.add_resource(AdminAppointmentService_calendar, '/admin/appointments/calendar')  # GET - Datos para calendario
+
+    # Rutas auxiliares para formularios
+    api.add_resource(AdminAppointmentService_therapy_types,
+                     '/admin/appointments/therapy-types')  # GET - Tipos de terapia
+    api.add_resource(AdminAppointmentService_medical_staff,
+                     '/admin/appointments/medical-staff')  # GET - Personal médico
+    api.add_resource(AdminAppointmentService_products,
+                     '/admin/appointments/products/<int:therapy_type_id>')  # GET - Productos por tipo
