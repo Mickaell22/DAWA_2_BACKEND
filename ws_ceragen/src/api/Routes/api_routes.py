@@ -57,6 +57,36 @@ from ..Services.Clinic.ClinicAllergyCatalogService import (clinic_AllergyCatalog
                                                            clinic_AllergyCatalog_service_Update,
                                                            clinic_AllergyCatalog_service_Delete)
 
+from ..Services.Admin.AdminInvoiceFullService import (admin_Invoice_service_get,
+                                                      admin_Invoice_getbyid,
+                                                      admin_Invoice_service_add,
+                                                      admin_Invoice_service_Update,
+                                                      admin_Invoice_service_Delete)
+
+from ..Services.Admin.AdminInvoiceTaxService import (admin_Invoice_tax_service_get,
+                                                     admin_Invoice_tax_getbyid,
+                                                     admin_Invoice_tax_service_add,
+                                                     admin_Invoice_tax_service_Update,
+                                                     admin_Invoice_tax_service_Delete)
+
+from ..Services.Admin.AdminInvoicePaymentService import (admin_Invoice_payment_service_get,
+                                                         admin_Invoice_payment_getbyid,
+                                                         admin_Invoice_payment_service_add,
+                                                         admin_Invoice_payment_service_Update,
+                                                         admin_Invoice_payment_service_Delete)
+
+from ..Services.Admin.AdminTaxService import (admin_Tax_service_get,
+                                              admin_Tax_getbyid,
+                                              admin_Tax_service_add,
+                                              admin_Tax_service_Update,
+                                              admin_Tax_service_Delete)
+
+from ..Services.Admin.AdminPaymentMethodService import (admin_PaymentMethod_service_get,
+                                                        admin_PaymentMethod_getbyid,
+                                                        admin_PaymentMethod_service_add,
+                                                        admin_PaymentMethod_service_Update,
+                                                        admin_PaymentMethod_service_Delete)
+
 from ..Services.Security.LoginService import LoginService
 from ..Services.Security.LogoutService import LogoutService
 from ..Services.Security.UserService import UserService, UserInsert, UserDelete, UserUpdate,UserpasswordUpdate,RecoveringPassword,EmailPasswordUpdate
@@ -207,6 +237,41 @@ def load_routes(api):
     api.add_resource(clinic_AllergyCatalog_service_add, '/clinic/AllergyCatalog/add')
     api.add_resource(clinic_AllergyCatalog_service_Update, '/clinic/AllergyCatalog/update')
     api.add_resource(clinic_AllergyCatalog_service_Delete, '/clinic/AllergyCatalog/delete/<int:id>/<string:user>')
+
+    # Rutas para el módulo de facturación (admin_invoice)
+    api.add_resource(admin_Invoice_service_get, '/admin/invoice/list')
+    api.add_resource(admin_Invoice_getbyid, '/admin/invoice/list/<int:id>')
+    api.add_resource(admin_Invoice_service_add, '/admin/invoice/add')
+    api.add_resource(admin_Invoice_service_Update, '/admin/invoice/update')
+    api.add_resource(admin_Invoice_service_Delete, '/admin/invoice/delete/<int:id>')
+
+    # Rutas para los pagos de facturación (admin_invoice_payment)
+    api.add_resource(admin_Invoice_payment_service_get, '/admin/invoice/payment/list')
+    api.add_resource(admin_Invoice_payment_getbyid, '/admin/invoice/payment/list/<int:id>')
+    api.add_resource(admin_Invoice_payment_service_add, '/admin/invoice/payment/add')
+    api.add_resource(admin_Invoice_payment_service_Update, '/admin/invoice/payment/update')
+    api.add_resource(admin_Invoice_payment_service_Delete, '/admin/invoice/payment/delete/<int:id>')
+
+    # Rutas para los impuestos de facturación (admin_invoice_tax)
+    api.add_resource(admin_Invoice_tax_service_get, '/admin/invoice/tax/list')
+    api.add_resource(admin_Invoice_tax_getbyid, '/admin/invoice/tax/list/<int:id>')
+    api.add_resource(admin_Invoice_tax_service_add, '/admin/invoice/tax/add')
+    api.add_resource(admin_Invoice_tax_service_Update, '/admin/invoice/tax/update')
+    api.add_resource(admin_Invoice_tax_service_Delete, '/admin/invoice/tax/delete/<int:id>')
+
+    # Rutas de Tabla Admin Tax
+    api.add_resource(admin_Tax_service_get, '/admin/Tax/list')  # Listar todos
+    api.add_resource(admin_Tax_getbyid, '/admin/Tax/list/<int:id>')  # Obtener por ID
+    api.add_resource(admin_Tax_service_add, '/admin/Tax/add')  # Agregar nuevo
+    api.add_resource(admin_Tax_service_Update, '/admin/Tax/update')  # Actualizar
+    api.add_resource(admin_Tax_service_Delete, '/admin/Tax/delete/<int:id>')  # Eliminación lógica
+
+    # Rutas de Tabla Admin Payment Method
+    api.add_resource(admin_PaymentMethod_service_get, '/admin/PaymentMethod/list')  # Listar todos
+    api.add_resource(admin_PaymentMethod_getbyid, '/admin/PaymentMethod/list/<int:id>')  # Obtener por ID
+    api.add_resource(admin_PaymentMethod_service_add, '/admin/PaymentMethod/add')  # Agregar nuevo
+    api.add_resource(admin_PaymentMethod_service_Update, '/admin/PaymentMethod/update')  # Actualizar
+    api.add_resource(admin_PaymentMethod_service_Delete, '/admin/PaymentMethod/delete/<int:id>')  # Eliminación lógica
 
     #******* SECURITY PATH ******#
     #metodo para el login

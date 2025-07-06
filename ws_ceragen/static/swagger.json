@@ -4269,7 +4269,879 @@
           }
         }
       }
+    },
+        "/admin/invoice/list": {
+      "get": {
+        "tags": ["Administrador"],
+        "summary": "Listar todas las facturas",
+        "description": "Retorna el listado completo de facturas registradas.",
+        "operationId": "ListInvoices",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "tokenapp",
+            "description": "Token de autenticación",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Listado exitoso",
+            "schema": { "$ref": "#/definitions/Response" }
+          },
+          "401": {
+            "description": "Token inválido",
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
+          },
+          "500": {
+            "description": "Error interno",
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
+          }
+        }
+      }
+    },
+    "/admin/invoice/list/{id}": {
+      "get": {
+        "tags": ["Administrador"],
+        "summary": "Obtener factura por ID",
+        "description": "Retorna información completa de una factura (cabecera, detalles, pagos, impuestos, sesiones desbloqueadas).",
+        "operationId": "GetInvoiceById",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "tokenapp",
+            "description": "Token de autenticación",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID de la factura",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Factura encontrada",
+            "schema": { "$ref": "#/definitions/Response" }
+          },
+          "404": {
+            "description": "Factura no encontrada",
+            "schema": { "$ref": "#/definitions/NotFound" }
+          },
+          "500": {
+            "description": "Error interno",
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
+          }
+        }
+      }
+    },
+    "/admin/invoice/add": {
+      "post": {
+        "tags": ["Administrador"],
+        "summary": "Agregar una nueva factura",
+        "description": "Crea una nueva factura con cabecera, detalles, pagos e impuestos.",
+        "operationId": "AddInvoice",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "tokenapp",
+            "description": "Token de autenticación",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Datos de la factura a registrar",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/InvoiceInsertRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Factura registrada exitosamente",
+            "schema": { "$ref": "#/definitions/Response" }
+          },
+          "400": {
+            "description": "Error de validación",
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
+          },
+          "500": {
+            "description": "Error interno",
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
+          }
+        }
+      }
+    },
+    "/admin/invoice/update": {
+      "patch": {
+        "tags": ["Administrador"],
+        "summary": "Actualizar una factura",
+        "description": "Actualiza los datos de una factura, incluyendo cabecera, detalles, pagos e impuestos.",
+        "operationId": "UpdateInvoice",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "tokenapp",
+            "description": "Token de autenticación",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Datos actualizados de la factura",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/InvoiceUpdateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Factura actualizada exitosamente",
+            "schema": { "$ref": "#/definitions/Response" }
+          },
+          "400": {
+            "description": "Error de validación",
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
+          },
+          "500": {
+            "description": "Error interno",
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
+          }
+        }
+      }
+    },
+    "/admin/invoice/delete/{id}": {
+      "delete": {
+        "tags": ["Administrador"],
+        "summary": "Eliminar lógicamente una factura",
+        "description": "Realiza eliminación lógica de la factura y sus componentes (detalles, pagos, impuestos).",
+        "operationId": "DeleteInvoice",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "tokenapp",
+            "description": "Token de autenticación",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID de la factura a eliminar",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Factura eliminada correctamente",
+            "schema": { "$ref": "#/definitions/Response" }
+          },
+          "404": {
+            "description": "Factura no encontrada",
+            "schema": { "$ref": "#/definitions/NotFound" }
+          },
+          "500": {
+            "description": "Error interno",
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
+          }
+        }
+      }
+    },
+  "/admin/invoice/payment/list": {
+    "get": {
+      "tags": ["Administrador"],
+      "summary": "Listar pagos de facturas",
+      "description": "Retorna todos los pagos de facturas registrados.",
+      "operationId": "ListInvoicePayments",
+      "parameters": [
+        {
+          "in": "header",
+          "name": "tokenapp",
+          "description": "Token de autenticación",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Listado obtenido correctamente",
+          "schema": { "$ref": "#/definitions/Response" }
+        },
+        "500": {
+          "description": "Error interno del servidor",
+          "schema": { "$ref": "#/definitions/ErrorResponse" }
+        }
+      }
     }
+  },
+  "/admin/invoice/payment/list/{id}": {
+    "get": {
+      "tags": ["Administrador"],
+      "summary": "Obtener pago de factura por ID",
+      "description": "Obtiene un pago específico por ID.",
+      "operationId": "GetInvoicePaymentById",
+      "parameters": [
+        {
+          "in": "header",
+          "name": "tokenapp",
+          "description": "Token de autenticación",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "id",
+          "in": "path",
+          "description": "ID del pago",
+          "required": true,
+          "type": "integer"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Pago encontrado",
+          "schema": { "$ref": "#/definitions/Response" }
+        },
+        "404": {
+          "description": "Pago no encontrado",
+          "schema": { "$ref": "#/definitions/NotFound" }
+        },
+        "500": {
+          "description": "Error interno",
+          "schema": { "$ref": "#/definitions/ErrorResponse" }
+        }
+      }
+    }
+  },
+  "/admin/invoice/payment/add": {
+    "post": {
+      "tags": ["Administrador"],
+      "summary": "Agregar pago de factura",
+      "description": "Agrega un nuevo pago a una factura.",
+      "operationId": "AddInvoicePayment",
+      "parameters": [
+        {
+          "in": "header",
+          "name": "tokenapp",
+          "description": "Token de autenticación",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "in": "body",
+          "name": "body",
+          "description": "Datos del nuevo pago",
+          "required": true,
+          "schema": { "$ref": "#/definitions/InvoicePayment" }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Pago agregado correctamente",
+          "schema": { "$ref": "#/definitions/Response" }
+        },
+        "500": {
+          "description": "Error interno",
+          "schema": { "$ref": "#/definitions/ErrorResponse" }
+        }
+      }
+    }
+  },
+  "/admin/invoice/payment/update": {
+    "patch": {
+      "tags": ["Administrador"],
+      "summary": "Actualizar pago de factura",
+      "description": "Actualiza los datos de un pago de factura.",
+      "operationId": "UpdateInvoicePayment",
+      "parameters": [
+        {
+          "in": "header",
+          "name": "tokenapp",
+          "description": "Token de autenticación",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "in": "body",
+          "name": "body",
+          "description": "Datos del pago actualizado",
+          "required": true,
+          "schema": { "$ref": "#/definitions/InvoicePayment" }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Pago actualizado correctamente",
+          "schema": { "$ref": "#/definitions/Response" }
+        },
+        "500": {
+          "description": "Error interno",
+          "schema": { "$ref": "#/definitions/ErrorResponse" }
+        }
+      }
+    }
+  },
+  "/admin/invoice/payment/delete/{id}": {
+    "delete": {
+      "tags": ["Administrador"],
+      "summary": "Eliminar pago de factura",
+      "description": "Elimina lógicamente un pago de factura.",
+      "operationId": "DeleteInvoicePayment",
+      "parameters": [
+        {
+          "in": "header",
+          "name": "tokenapp",
+          "description": "Token de autenticación",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "id",
+          "in": "path",
+          "description": "ID del pago a eliminar",
+          "required": true,
+          "type": "integer"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Pago eliminado correctamente",
+          "schema": { "$ref": "#/definitions/Response" }
+        },
+        "404": {
+          "description": "Pago no encontrado",
+          "schema": { "$ref": "#/definitions/NotFound" }
+        },
+        "500": {
+          "description": "Error interno",
+          "schema": { "$ref": "#/definitions/ErrorResponse" }
+        }
+      }
+    }
+  },
+      "/admin/invoice/tax/list": {
+    "get": {
+      "tags": ["Administrador"],
+      "summary": "Listar impuestos de facturas",
+      "description": "Retorna todos los impuestos aplicados a facturas.",
+      "operationId": "ListInvoiceTaxes",
+      "parameters": [
+        {
+          "in": "header",
+          "name": "tokenapp",
+          "description": "Token de autenticación",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Listado obtenido correctamente",
+          "schema": { "$ref": "#/definitions/Response" }
+        },
+        "500": {
+          "description": "Error interno",
+          "schema": { "$ref": "#/definitions/ErrorResponse" }
+        }
+      }
+    }
+  },
+  "/admin/invoice/tax/list/{id}": {
+    "get": {
+      "tags": ["Administrador"],
+      "summary": "Obtener impuesto de factura por ID",
+      "description": "Obtiene un impuesto específico por ID.",
+      "operationId": "GetInvoiceTaxById",
+      "parameters": [
+        {
+          "in": "header",
+          "name": "tokenapp",
+          "description": "Token de autenticación",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "id",
+          "in": "path",
+          "description": "ID del impuesto",
+          "required": true,
+          "type": "integer"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Impuesto encontrado",
+          "schema": { "$ref": "#/definitions/Response" }
+        },
+        "404": {
+          "description": "Impuesto no encontrado",
+          "schema": { "$ref": "#/definitions/NotFound" }
+        },
+        "500": {
+          "description": "Error interno",
+          "schema": { "$ref": "#/definitions/ErrorResponse" }
+        }
+      }
+    }
+  },
+  "/admin/invoice/tax/add": {
+    "post": {
+      "tags": ["Administrador"],
+      "summary": "Agregar impuesto a factura",
+      "description": "Agrega un nuevo impuesto a una factura.",
+      "operationId": "AddInvoiceTax",
+      "parameters": [
+        {
+          "in": "header",
+          "name": "tokenapp",
+          "description": "Token de autenticación",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "in": "body",
+          "name": "body",
+          "description": "Datos del nuevo impuesto",
+          "required": true,
+          "schema": { "$ref": "#/definitions/InvoiceTax" }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Impuesto agregado correctamente",
+          "schema": { "$ref": "#/definitions/Response" }
+        },
+        "500": {
+          "description": "Error interno",
+          "schema": { "$ref": "#/definitions/ErrorResponse" }
+        }
+      }
+    }
+  },
+  "/admin/invoice/tax/update": {
+    "patch": {
+      "tags": ["Administrador"],
+      "summary": "Actualizar impuesto de factura",
+      "description": "Actualiza los datos de un impuesto de factura.",
+      "operationId": "UpdateInvoiceTax",
+      "parameters": [
+        {
+          "in": "header",
+          "name": "tokenapp",
+          "description": "Token de autenticación",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "in": "body",
+          "name": "body",
+          "description": "Datos del impuesto actualizado",
+          "required": true,
+          "schema": { "$ref": "#/definitions/InvoiceTax" }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Impuesto actualizado correctamente",
+          "schema": { "$ref": "#/definitions/Response" }
+        },
+        "500": {
+          "description": "Error interno",
+          "schema": { "$ref": "#/definitions/ErrorResponse" }
+        }
+      }
+    }
+  },
+  "/admin/invoice/tax/delete/{id}": {
+    "delete": {
+      "tags": ["Administrador"],
+      "summary": "Eliminar impuesto de factura",
+      "description": "Elimina lógicamente un impuesto de factura.",
+      "operationId": "DeleteInvoiceTax",
+      "parameters": [
+        {
+          "in": "header",
+          "name": "tokenapp",
+          "description": "Token de autenticación",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "id",
+          "in": "path",
+          "description": "ID del impuesto a eliminar",
+          "required": true,
+          "type": "integer"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Impuesto eliminado correctamente",
+          "schema": { "$ref": "#/definitions/Response" }
+        },
+        "404": {
+          "description": "Impuesto no encontrado",
+          "schema": { "$ref": "#/definitions/NotFound" }
+        },
+        "500": {
+          "description": "Error interno",
+          "schema": { "$ref": "#/definitions/ErrorResponse" }
+        }
+      }
+    }
+  },
+      "/admin/Tax/list": {
+    "get": {
+      "tags": ["Administrador"],
+      "summary": "Listar impuestos",
+      "description": "Retorna todos los impuestos activos.",
+      "operationId": "ListAdminTaxes",
+      "parameters": [
+        {
+          "in": "header",
+          "name": "tokenapp",
+          "description": "Token de autenticación",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Listado obtenido correctamente",
+          "schema": { "$ref": "#/definitions/Response" }
+        },
+        "500": {
+          "description": "Error interno",
+          "schema": { "$ref": "#/definitions/ErrorResponse" }
+        }
+      }
+    }
+  },
+  "/admin/Tax/list/{id}": {
+    "get": {
+      "tags": ["Administrador"],
+      "summary": "Obtener impuesto por ID",
+      "description": "Obtiene un impuesto específico por ID.",
+      "operationId": "GetAdminTaxById",
+      "parameters": [
+        {
+          "in": "header",
+          "name": "tokenapp",
+          "description": "Token de autenticación",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "id",
+          "in": "path",
+          "description": "ID del impuesto",
+          "required": true,
+          "type": "integer"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Impuesto encontrado",
+          "schema": { "$ref": "#/definitions/Response" }
+        },
+        "404": {
+          "description": "Impuesto no encontrado",
+          "schema": { "$ref": "#/definitions/NotFound" }
+        },
+        "500": {
+          "description": "Error interno",
+          "schema": { "$ref": "#/definitions/ErrorResponse" }
+        }
+      }
+    }
+  },
+  "/admin/Tax/add": {
+    "post": {
+      "tags": ["Administrador"],
+      "summary": "Agregar impuesto",
+      "description": "Agrega un nuevo impuesto.",
+      "operationId": "AddAdminTax",
+      "parameters": [
+        {
+          "in": "header",
+          "name": "tokenapp",
+          "description": "Token de autenticación",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "in": "body",
+          "name": "body",
+          "description": "Datos del nuevo impuesto",
+          "required": true,
+          "schema": { "$ref": "#/definitions/AdminTax" }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Impuesto agregado correctamente",
+          "schema": { "$ref": "#/definitions/Response" }
+        },
+        "500": {
+          "description": "Error interno",
+          "schema": { "$ref": "#/definitions/ErrorResponse" }
+        }
+      }
+    }
+  },
+  "/admin/Tax/update": {
+    "patch": {
+      "tags": ["Administrador"],
+      "summary": "Actualizar impuesto",
+      "description": "Actualiza los datos de un impuesto.",
+      "operationId": "UpdateAdminTax",
+      "parameters": [
+        {
+          "in": "header",
+          "name": "tokenapp",
+          "description": "Token de autenticación",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "in": "body",
+          "name": "body",
+          "description": "Datos del impuesto actualizado",
+          "required": true,
+          "schema": { "$ref": "#/definitions/AdminTax" }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Impuesto actualizado correctamente",
+          "schema": { "$ref": "#/definitions/Response" }
+        },
+        "500": {
+          "description": "Error interno",
+          "schema": { "$ref": "#/definitions/ErrorResponse" }
+        }
+      }
+    }
+  },
+  "/admin/Tax/delete/{id}": {
+    "delete": {
+      "tags": ["Administrador"],
+      "summary": "Eliminar impuesto",
+      "description": "Elimina lógicamente un impuesto.",
+      "operationId": "DeleteAdminTax",
+      "parameters": [
+        {
+          "in": "header",
+          "name": "tokenapp",
+          "description": "Token de autenticación",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "id",
+          "in": "path",
+          "description": "ID del impuesto a eliminar",
+          "required": true,
+          "type": "integer"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Impuesto eliminado correctamente",
+          "schema": { "$ref": "#/definitions/Response" }
+        },
+        "404": {
+          "description": "Impuesto no encontrado",
+          "schema": { "$ref": "#/definitions/NotFound" }
+        },
+        "500": {
+          "description": "Error interno",
+          "schema": { "$ref": "#/definitions/ErrorResponse" }
+        }
+      }
+    }
+  },
+    "/admin/PaymentMethod/list": {
+  "get": {
+    "tags": ["Administrador"],
+    "summary": "Listar métodos de pago",
+    "description": "Retorna todos los métodos de pago activos.",
+    "operationId": "ListPaymentMethods",
+    "parameters": [
+      {
+        "in": "header",
+        "name": "tokenapp",
+        "description": "Token de autenticación",
+        "required": true,
+        "type": "string"
+      }
+    ],
+    "responses": {
+      "200": {
+        "description": "Listado obtenido correctamente",
+        "schema": { "$ref": "#/definitions/Response" }
+      },
+      "500": {
+        "description": "Error interno",
+        "schema": { "$ref": "#/definitions/ErrorResponse" }
+      }
+    }
+  }
+},
+"/admin/PaymentMethod/list/{id}": {
+  "get": {
+    "tags": ["Administrador"],
+    "summary": "Obtener método de pago por ID",
+    "description": "Obtiene un método de pago específico por ID.",
+    "operationId": "GetPaymentMethodById",
+    "parameters": [
+      {
+        "in": "header",
+        "name": "tokenapp",
+        "description": "Token de autenticación",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "name": "id",
+        "in": "path",
+        "description": "ID del método de pago",
+        "required": true,
+        "type": "integer"
+      }
+    ],
+    "responses": {
+      "200": {
+        "description": "Método de pago encontrado",
+        "schema": { "$ref": "#/definitions/Response" }
+      },
+      "404": {
+        "description": "Método de pago no encontrado",
+        "schema": { "$ref": "#/definitions/NotFound" }
+      },
+      "500": {
+        "description": "Error interno",
+        "schema": { "$ref": "#/definitions/ErrorResponse" }
+      }
+    }
+  }
+},
+"/admin/PaymentMethod/add": {
+  "post": {
+    "tags": ["Administrador"],
+    "summary": "Agregar método de pago",
+    "description": "Agrega un nuevo método de pago.",
+    "operationId": "AddPaymentMethod",
+    "parameters": [
+      {
+        "in": "header",
+        "name": "tokenapp",
+        "description": "Token de autenticación",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "in": "body",
+        "name": "body",
+        "description": "Datos del nuevo método de pago",
+        "required": true,
+        "schema": { "$ref": "#/definitions/PaymentMethod" }
+      }
+    ],
+    "responses": {
+      "200": {
+        "description": "Método de pago agregado correctamente",
+        "schema": { "$ref": "#/definitions/Response" }
+      },
+      "500": {
+        "description": "Error interno",
+        "schema": { "$ref": "#/definitions/ErrorResponse" }
+      }
+    }
+  }
+},
+"/admin/PaymentMethod/update": {
+  "patch": {
+    "tags": ["Administrador"],
+    "summary": "Actualizar método de pago",
+    "description": "Actualiza los datos de un método de pago.",
+    "operationId": "UpdatePaymentMethod",
+    "parameters": [
+      {
+        "in": "header",
+        "name": "tokenapp",
+        "description": "Token de autenticación",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "in": "body",
+        "name": "body",
+        "description": "Datos del método de pago actualizado",
+        "required": true,
+        "schema": { "$ref": "#/definitions/PaymentMethod" }
+      }
+    ],
+    "responses": {
+      "200": {
+        "description": "Método de pago actualizado correctamente",
+        "schema": { "$ref": "#/definitions/Response" }
+      },
+      "500": {
+        "description": "Error interno",
+        "schema": { "$ref": "#/definitions/ErrorResponse" }
+      }
+    }
+  }
+},
+"/admin/PaymentMethod/delete/{id}": {
+  "delete": {
+    "tags": ["Administrador"],
+    "summary": "Eliminar método de pago",
+    "description": "Elimina lógicamente un método de pago.",
+    "operationId": "DeletePaymentMethod",
+    "parameters": [
+      {
+        "in": "header",
+        "name": "tokenapp",
+        "description": "Token de autenticación",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "name": "id",
+        "in": "path",
+        "description": "ID del método de pago a eliminar",
+        "required": true,
+        "type": "integer"
+      }
+    ],
+    "responses": {
+      "200": {
+        "description": "Método de pago eliminado correctamente",
+        "schema": { "$ref": "#/definitions/Response" }
+      },
+      "404": {
+        "description": "Método de pago no encontrado",
+        "schema": { "$ref": "#/definitions/NotFound" }
+      },
+      "500": {
+        "description": "Error interno",
+        "schema": { "$ref": "#/definitions/ErrorResponse" }
+      }
+    }
+  }
+}
+
   },
   "definitions": {
     "addQuestion": {
@@ -4651,6 +5523,79 @@
         "type": "string",
         "example": "admin"
       }
+    }
+  },
+
+     "InvoiceInsertRequest": {
+    "type": "object",
+    "properties": {
+      "inv_client_id": { "type": "integer" },
+      "inv_patient_id": { "type": "integer" },
+      "inv_subtotal": { "type": "number" },
+      "inv_discount": { "type": "number" },
+      "inv_tax": { "type": "number" },
+      "inv_grand_total": { "type": "number" },
+      "details": { "type": "array", "items": { "type": "object" } },
+      "payments": { "type": "array", "items": { "type": "object" } },
+      "taxes": { "type": "array", "items": { "type": "object" } }
+    },
+    "required": ["inv_client_id", "inv_patient_id", "details"]
+  },
+  "InvoiceUpdateRequest": {
+    "type": "object",
+    "properties": {
+      "inv_id": { "type": "integer" },
+      "inv_subtotal": { "type": "number" },
+      "inv_discount": { "type": "number" },
+      "inv_tax": { "type": "number" },
+      "inv_grand_total": { "type": "number" },
+      "details": { "type": "array", "items": { "type": "object" } },
+      "payments": { "type": "array", "items": { "type": "object" } },
+      "taxes": { "type": "array", "items": { "type": "object" } }
+    },
+    "required": ["inv_id"]
+  },
+
+    "InvoicePayment": {
+      "type": "object",
+      "properties": {
+        "inp_invoice_id": { "type": "integer" },
+        "inp_payment_method_id": { "type": "integer" },
+        "inp_amount": { "type": "number", "format": "float" },
+        "inp_reference": { "type": "string" },
+        "inp_proof_image_path": { "type": "string" },
+        "user_process": { "type": "string" }
+      }
+    },
+      "InvoiceTax": {
+        "type": "object",
+        "properties": {
+          "int_invoice_id": { "type": "integer" },
+          "int_tax_type_id": { "type": "integer" },
+          "int_amount": { "type": "number", "format": "float" },
+          "user_process": { "type": "string" }
+        }
+      },
+    "AdminTax": {
+    "type": "object",
+    "properties": {
+      "tax_id": { "type": "integer" },
+      "tax_name": { "type": "string" },
+      "tax_percentage": { "type": "number", "format": "float" },
+      "tax_description": { "type": "string" },
+      "user_process": { "type": "string" }
+    }
+  },
+
+    "PaymentMethod": {
+    "type": "object",
+    "properties": {
+      "pme_id": { "type": "integer" },
+      "pme_name": { "type": "string" },
+      "pme_description": { "type": "string" },
+      "pme_require_references": { "type": "boolean" },
+      "pme_require_picture_proff": { "type": "boolean" },
+      "user_process": { "type": "string" }
     }
   },
 
