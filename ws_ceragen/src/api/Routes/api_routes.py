@@ -190,6 +190,8 @@ from ..Services.Admin.AdminTherapyService import (
     AdminTherapyService_update,
     AdminTherapyService_delete
 )
+from ..Services.Admin.AdminTherapyReportService import AdminTherapyReportService
+
 
 # Servicios de Producto
 from ..Services.Admin.AdminProductService import (
@@ -294,6 +296,7 @@ def load_routes(api):
     api.add_resource(AdminTherapyService_add, '/admin/therapy-type/add')
     api.add_resource(AdminTherapyService_update, '/admin/therapy-type/update')
     api.add_resource(AdminTherapyService_delete, '/admin/therapy-type/delete/<int:tht_id>/<string:user>')
+    api.add_resource(AdminTherapyReportService, '/admin/therapy-type/report')
 
     # ===============================================================================
     # RUTAS DE ADMINISTRACIÓN - PRODUCTOS
