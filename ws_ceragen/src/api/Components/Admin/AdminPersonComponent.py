@@ -3,6 +3,7 @@ from ....utils.database.connection_db import DataBaseHandle
 from datetime import datetime
 from ....utils.general.logs import HandleLogs
 from ....utils.general.response import internal_response
+from datetime import datetime, timedelta
 
 class AdminPersonComponent:
     @staticmethod
@@ -105,17 +106,72 @@ class AdminPersonComponent:
     @staticmethod
     def delete_admin_person(per_id, p_user):
         try:
-            query = "UPDATE ceragen.admin_person " \
-                     "SET per_state = false, user_deleted = %s, date_deleted = %s WHERE per_id = %s"
-            record = (p_user, datetime.now(), per_id)
-            rows_affected = DataBaseHandle.ExecuteNonQuery(query, record)
-            HandleLogs.write_log("Filas afectadas: " + str(rows_affected))
+            HandleLogs.write_log(f"🗑️ Ejecutando eliminación lógica - ID: {per_id}, Usuario: {p_user}")
 
-            if rows_affected > 0:
-                return True, f"Registro con ID {per_id} eliminado exitosamente."
+            query = "UPDATE ceragen.admin_person " \
+                    "SET per_state = false, user_deleted = %s, date_deleted = %s WHERE per_id = %s"
+            record = (p_user, datetime.now(), per_id)
+
+            HandleLogs.write_log(f"SQL: {query}")
+            HandleLogs.write_log(f"Parámetros: {record}")
+
+            result = DataBaseHandle.ExecuteNonQuery(query, record)
+            HandleLogs.write_log(f"Resultado ExecuteNonQuery: {result}")
+
+            # 🔧 CORRECCIÓN: El método ExecuteNonQuery devuelve un dict, no un número
+            if result and result.get('result', False):
+                rows_affected = result.get('data', 0)
+                HandleLogs.write_log(f"✅ Filas afectadas: {rows_affected}")
+
+                if rows_affected > 0:
+                    return True, f"Registro con ID {per_id} eliminado exitosamente."
+                else:
+                    return False, f"No se encontró ningún registro con ID {per_id}."
             else:
-                return False, f"No se encontró ningún registro con ID {per_id}."
+                error_msg = result.get('message', 'Error desconocido') if result else 'ExecuteNonQuery retornó None'
+                HandleLogs.write_error(f"❌ Error en ExecuteNonQuery: {error_msg}")
+                return False, f"Error al eliminar registro: {error_msg}"
+
+        except Exception as err:
+            HandleLogs.write_error(f"❌ Excepción en delete_admin_person: {err}")
+            return False, f"Error interno: {str(err)}"
+    @staticmethod
+    def get_person_statistics():
+        try:
+            # Fechas límite para semana, mes y año
+            today = datetime.now()
+            start_week = (today - timedelta(days=today.weekday())).replace(hour=0, minute=0, second=0, microsecond=0)
+            start_month = today.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+            start_year = today.replace(month=1, day=1, hour=0, minute=0, second=0, microsecond=0)
+
+            query = """
+                    SELECT
+                        COUNT(*) FILTER (WHERE date_created >= %s) AS week,
+                        COUNT(*) FILTER (WHERE date_created >= %s) AS month,
+                        COUNT(*) FILTER (WHERE date_created >= %s) AS year
+                    FROM ceragen.admin_person
+                    WHERE per_state = TRUE;
+                """
+
+            params = (start_week, start_month, start_year)
+            result = DataBaseHandle.getRecords(query, 1, params)
+            if result and isinstance(result, dict):
+                return {
+                    "week": result.get('week', 0),
+                    "month": result.get('month', 0),
+                    "year": result.get('year', 0)
+                }
+            # Si el resultado es una lista con un dict
+            elif result and isinstance(result, list) and isinstance(result[0], dict):
+                d = result[0]
+                return {
+                    "week": d.get('week', 0),
+                    "month": d.get('month', 0),
+                    "year": d.get('year', 0)
+                }
+            else:
+                return {"week": 0, "month": 0, "year": 0}
         except Exception as err:
             HandleLogs.write_error(err)
-            return None
+            return {"week": 0, "month": 0, "year": 0}
 

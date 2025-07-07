@@ -19,6 +19,10 @@ SWAGGERUI_BLUEPRINT = get_swaggerui_blueprint(SWAGGER_URL, API_URL,
                                               config={
                                                   'app_name': 'secoed-ws-restfulapi'
                                               })
+@app.route('/health')
+def health():
+    return "OK", 200
+
 
 app.register_blueprint(SWAGGERUI_BLUEPRINT, url_prefix=SWAGGER_URL)
 

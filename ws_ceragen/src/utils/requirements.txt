@@ -1,50 +1,70 @@
-﻿aniso8601==9.0.1
-asgiref==3.8.1
-blinker==1.8.2
-certifi==2024.7.4
-charset-normalizer==2.0.12
-click==8.1.7
-colorama==0.4.6
-contourpy==1.2.1
-cycler==0.12.1
-distlib==0.3.8
-Django==5.0.5
-filelock==3.14.0
+﻿# 🐍 Dependencies para Secoed V3 - Backend Flask
+# Python 3.12 (mismo que PyCharm local)
+
+# Framework Principal
 Flask==2.0.2
 Flask-Cors==3.0.10
 Flask-JWT-Extended==4.4.4
 Flask-RESTful==0.3.9
 flask-swagger-ui==3.36.0
-fonttools==4.53.1
-fpdf==1.7.2
-idna==3.7
+
+# Base de Datos (binary para mejor compatibilidad Docker)
+psycopg2-binary==2.9.9
+
+# Utilitarios Core
+python-dotenv==1.0.0
+requests==2.31.0
+Werkzeug==2.3.0
+
+# Serialización y Validación
+marshmallow==3.14.1
+PyJWT==2.9.0
+
+# Dependencias de Flask
+blinker==1.8.2
+click==8.1.7
 itsdangerous==2.2.0
 Jinja2==3.1.4
-joblib==1.4.2
-kiwisolver==1.4.5
 MarkupSafe==2.1.5
-marshmallow==3.14.1
-matplotlib==3.9.2
-numpy==2.0.1
-packaging==24.1
+
+# PDF Generation
+fpdf==1.7.2
+
+# Data Processing (versiones recientes para Python 3.12)
 pandas==2.2.2
-pillow==10.4.0
-platformdirs==4.2.1
-psycopg2==2.9.9
-PyJWT==2.9.0
-pyparsing==3.1.2
-python-dateutil==2.9.0.post0
-pytz==2024.1
-requests==2.31.0
+numpy==2.0.1
+
+# Análisis (versiones compatibles Python 3.12)
+matplotlib==3.9.2
 scikit-learn==1.5.1
 scipy==1.14.0
-setuptools==72.2.0
-six==1.16.0
-sqlparse==0.5.0
-threadpoolctl==3.5.0
-tzdata==2024.1
+
+# Utilidades
+certifi==2024.7.4
+charset-normalizer==2.0.12
+colorama==0.4.6
 urllib3==1.26.7
-virtualenv==20.26.1
-Werkzeug==2.3.0
+pytz==2024.1
+python-dateutil==2.9.0.post0
+six==1.16.0
+packaging==24.1
+
+# Imagen Processing
+pillow==10.4.0
+
+# XML Processing
 xmltodict==0.13.0
-python-dotenv
+
+# Threading y Jobs
+threadpoolctl==3.5.0
+joblib==1.4.2
+
+# Build tools
+setuptools==72.2.0
+
+# Math/plotting dependencies
+contourpy==1.2.1
+cycler==0.12.1
+fonttools==4.53.1
+kiwisolver==1.4.5
+pyparsing==3.1.2
