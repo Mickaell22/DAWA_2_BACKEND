@@ -242,6 +242,7 @@ from ..Services.Admin.AdminAppointmentService import (
     AdminAppointmentService_products
 )
 
+from ..Services.Admin.AdminPatientReportService import AdminPatientReportService
 
 def load_routes(api):
     """
@@ -256,7 +257,7 @@ def load_routes(api):
     api.add_resource(AdminPatientService_add, '/admin/patients/add')
     api.add_resource(AdminPatientService_update, '/admin/patients/update')
     api.add_resource(AdminPatientService_delete, '/admin/patients/delete/<int:pat_id>/<string:user>')
-
+    api.add_resource(AdminPatientReportService, '/admin/patients/report')
     # ===============================================================================
     # RUTAS DE ADMINISTRACIÓN - CLIENTES
     # ===============================================================================
