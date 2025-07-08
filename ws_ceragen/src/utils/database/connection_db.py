@@ -49,6 +49,30 @@ class DataBaseHandle:
             return internal_response(result, message, res)
 
     @staticmethod
+    def getRecordsRaw(query, tamanio, record=()):
+        try:
+            conn = conn_db()
+            cursor = conn.cursor()
+            if len(record) == 0:
+                cursor.execute(query)
+            else:
+                cursor.execute(query, record)
+
+            if tamanio == 0:
+                res = cursor.fetchall()
+            elif tamanio == 1:
+                res = cursor.fetchone()
+            else:
+                res = cursor.fetchmany(tamanio)
+            return res if res else []
+        except Exception as ex:
+            HandleLogs.write_error(ex)
+            return []
+        finally:
+            cursor.close()
+            conn.close()
+
+    @staticmethod
     def getRecord(query, tamanio, record=()):
         try:
             conn = conn_db()

@@ -190,6 +190,8 @@ from ..Services.Admin.AdminTherapyService import (
     AdminTherapyService_update,
     AdminTherapyService_delete
 )
+from ..Services.Admin.AdminTherapyReportService import AdminTherapyReportService
+
 
 # Servicios de Producto
 from ..Services.Admin.AdminProductService import (
@@ -242,6 +244,7 @@ from ..Services.Admin.AdminAppointmentService import (
     AdminAppointmentService_products
 )
 
+from ..Services.Admin.AdminPatientReportService import AdminPatientReportService
 
 def load_routes(api):
     """
@@ -256,7 +259,7 @@ def load_routes(api):
     api.add_resource(AdminPatientService_add, '/admin/patients/add')
     api.add_resource(AdminPatientService_update, '/admin/patients/update')
     api.add_resource(AdminPatientService_delete, '/admin/patients/delete/<int:pat_id>/<string:user>')
-
+    api.add_resource(AdminPatientReportService, '/admin/patients/report')
     # ===============================================================================
     # RUTAS DE ADMINISTRACIÓN - CLIENTES
     # ===============================================================================
@@ -293,6 +296,7 @@ def load_routes(api):
     api.add_resource(AdminTherapyService_add, '/admin/therapy-type/add')
     api.add_resource(AdminTherapyService_update, '/admin/therapy-type/update')
     api.add_resource(AdminTherapyService_delete, '/admin/therapy-type/delete/<int:tht_id>/<string:user>')
+    api.add_resource(AdminTherapyReportService, '/admin/therapy-type/report')
 
     # ===============================================================================
     # RUTAS DE ADMINISTRACIÓN - PRODUCTOS

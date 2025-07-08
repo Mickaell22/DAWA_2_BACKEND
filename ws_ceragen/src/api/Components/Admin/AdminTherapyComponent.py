@@ -93,6 +93,39 @@ class AdminTherapyComponent:
             v_message = "Error al actualizar terapia: " + str(err)
         finally:
             return internal_response(v_result, v_message, v_data)
+    @staticmethod
+    def report_therapy_types(nombre=None, estado=None):
+        try:
+            print(f"📊 Parámetros recibidos para reporte de tipos de terapia: nombre={nombre}, estado={estado}")
+            query = """
+                SELECT tht_id, tht_name, tht_description, tht_state, user_created, 
+                       to_char(date_created, 'DD/MM/YYYY HH24:MI:SS') as date_created,
+                       user_modified, to_char(date_modified, 'DD/MM/YYYY HH24:MI:SS') as date_modified,
+                       user_deleted, to_char(date_deleted, 'DD/MM/YYYY HH24:MI:SS') as date_deleted
+                FROM ceragen.admin_therapy_type
+                WHERE 1=1
+            """
+            params = []
+
+            if nombre:
+                query += " AND LOWER(tht_name) LIKE %s"
+                params.append(f"%{nombre.lower()}%")
+
+            if estado is not None:
+                estado_bool = estado.lower() == 'activo'
+                query += " AND tht_state = %s"
+                params.append(estado_bool)
+
+            print(f"🧪 Consulta SQL: {query}")
+            print(f"📦 Parámetros: {params}")
+
+            result = DataBaseHandle.getRecordsRaw(query, 0, tuple(params))
+            return result
+        except Exception as err:
+            HandleLogs.write_error(err)
+            print(f"❌ Error en report_therapy_types: {err}")
+            return []
+
 
     @staticmethod
     def delete_admin_therapy(tht_id, p_user):
