@@ -100,7 +100,7 @@ class Invoice_Payment_Component:
             """
             result = DataBaseHandle.getRecords(query, 1, (invoice_id,))
             if result:
-                total_paid = result[0]['total_paid']
+                total_paid = result.get('total_paid', 0)
                 if isinstance(total_paid, Decimal):
                     return float(total_paid)
                 return total_paid
