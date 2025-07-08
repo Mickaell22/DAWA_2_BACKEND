@@ -75,6 +75,7 @@ class admin_Invoice_getbyid(Resource):
     def get(id):
         try:
             HandleLogs.write_log(f"Obtener factura por id: {id}")
+
             token = request.headers.get('tokenapp')
             if not token:
                 return response_error("Error: No se ha podido Obtener el Token")
@@ -82,14 +83,20 @@ class admin_Invoice_getbyid(Resource):
                 return response_unauthorize()
 
             invoice = Invoice_Component.GetInvoiceById(id)
-            if not invoice:
+            HandleLogs.write_log(f"Resultado GetInvoiceById: {invoice}")
+
+            if not invoice or not invoice.get('result'):
                 return response_not_found()
 
-            invoice_data = invoice[0] if isinstance(invoice, list) else invoice
+            invoice_data = invoice.get('data')
+            if not invoice_data:
+                return response_not_found()
 
             details = Invoice_Detail_Component.GetInvoiceDetailsByInvoiceId(id)
             payments = Invoice_Payment_Component.GetInvoicePaymentByInvoiceId(id)
             taxes = Invoice_Tax_Component.GetInvoiceTaxByInvoiceId(id)
+
+            HandleLogs.write_log(f"📦 Datos recibidos de invoice_data: {invoice_data}")
 
             total_pagado = Invoice_Payment_Component.GetTotalPaidAmountByInvoiceId(id)
             total_pagado = float(total_pagado) if isinstance(total_pagado, Decimal) else total_pagado
@@ -238,37 +245,26 @@ class admin_Invoice_service_Update(Resource):
             if not data:
                 return response_error("Error en los datos para procesar")
 
-            invoice_req = InvoiceFullRequest()
-            errors = invoice_req.validate(data)
-            if errors:
-                HandleLogs.write_error(f"Error al validar Invoice completo: {errors}")
-                return response_error(f"Error al validar Invoice completo: {errors}")
-
-            data["user_process"] = user_token
-            result_invoice = Invoice_Component.UpdateInvoice(data)
-            if not result_invoice["result"]:
-                return response_error(result_invoice["message"])
-
             invoice_id = data.get("inv_id")
+            if not invoice_id:
+                return response_error("Falta ID de factura")
 
-            for d in data.get("details", []):
-                d["user_process"] = user_token
-                Invoice_Detail_Component.UpdateInvoiceDetail(d)
+            payments = data.get("payments", [])
+            if not payments:
+                return response_error("No se han enviado pagos a registrar")
 
-            for p in data.get("payments", []):
+            for p in payments:
                 p["user_process"] = user_token
-                Invoice_Payment_Component.UpdateInvoicePayment(p)
-
-            for t in data.get("taxes", []):
-                t["user_process"] = user_token
-                if "tax_id" in t:
-                    t["int_tax_id"] = t.pop("tax_id")
-                Invoice_Tax_Component.UpdateInvoiceTax(t)
+                p["inp_invoice_id"] = invoice_id
+                result = Invoice_Payment_Component.AddInvoicePayment(p)
+                if not result["result"]:
+                    return response_error(result["message"])
 
             return response_success({"invoice_id": invoice_id})
         except Exception as err:
             HandleLogs.write_error(err)
             return response_error(str(err))
+
 
 
 class admin_Invoice_service_Delete(Resource):

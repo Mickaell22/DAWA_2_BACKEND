@@ -385,7 +385,7 @@ def load_routes(api):
     
     # Facturas principales
     api.add_resource(admin_Invoice_service_get, '/admin/invoice/list')
-    api.add_resource(admin_Invoice_getbyid, '/admin/invoice/list/<int:id>')
+    api.add_resource(admin_Invoice_getbyid, '/admin/invoice/<int:id>')
     api.add_resource(admin_Invoice_service_add, '/admin/invoice/add')
     api.add_resource(admin_Invoice_service_Update, '/admin/invoice/update')
     api.add_resource(admin_Invoice_service_Delete, '/admin/invoice/delete/<int:id>')
