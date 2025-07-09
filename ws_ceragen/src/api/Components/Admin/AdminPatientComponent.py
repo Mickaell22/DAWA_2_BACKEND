@@ -90,6 +90,23 @@ class AdminPatientComponent:
             return internal_response(v_result, v_message, v_data)
 
     @staticmethod
+    def delete_patient(pat_id, user_id):
+        try:
+            v_message = None
+            v_result = False
+            v_data = None
+            sql = "DELETE FROM ceragen.admin_patient WHERE pat_id = %s"
+            record = (pat_id,)
+            v_data = DataBaseHandle.ExecuteNonQuery(sql, record)
+            if v_data is not None:
+                v_result = True
+        except Exception as err:
+            HandleLogs.write_error(err)
+            v_message = "Error al eliminar paciente: " + str(err)
+        finally:
+            return internal_response(v_result, v_message, v_data)
+
+    @staticmethod
     def report_patients(estado=None, cliente=None):
         try:
             print(f"🔍 Parámetros recibidos: {estado} {cliente}")
