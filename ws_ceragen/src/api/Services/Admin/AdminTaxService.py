@@ -1,305 +1,186 @@
 from flask_restful import Resource
 from flask import request
 from marshmallow import ValidationError
-from ...Components.Admin.AdminTaxComponent import AdminTaxComponent
-from ...Components.Security.TokenComponent import TokenComponent
-from ....utils.general.logs import HandleLogs
-from ....utils.general.response import (
+from src.api.Components.Admin.AdminTaxComponent import AdminTaxComponent
+from src.api.Components.Security.TokenComponent import TokenComponent
+from src.utils.general.logs import HandleLogs
+from src.utils.general.response import (
     response_success,
     response_not_found,
     response_error,
     response_unauthorize,
+    response_inserted,
+    response_success_personal # Importamos esta para respuestas con datos y mensaje
 )
-from ...Model.Request.Admin.TaxRequest import (
+from src.api.Model.Request.Admin.TaxRequest import (
     admin_tax_insert_schema,
     admin_tax_update_schema,
     admin_tax_delete_schema,
     admin_tax_response_schema,
     admin_tax_list_response_schema
 )
+from src.api.Model.Admin.AdminTaxModel import AdminTaxModel
 
 
 class AdminTaxServiceGet(Resource):
-    """Servicio para obtener lista de todos los impuestos"""
-    
     @staticmethod
     def get():
         try:
-            HandleLogs.write_log("Listando todos los impuestos")
-            
-            # Validar token
             token = request.headers.get('tokenapp')
-            if token is None:
-                return response_error("Error: No se ha podido obtener el Token")
-
+            if not token:
+                return response_error("Token no proporcionado", status_code=400)
             if not TokenComponent.Token_Validate(token):
                 return response_unauthorize()
 
-            # Obtener lista de impuestos
-            taxes = AdminTaxComponent.list_all_admin_taxes()
-            
-            if taxes:
-                # Serializar respuesta
-                result = admin_tax_list_response_schema.dump(taxes)
-                return response_success(result)
+            res = AdminTaxComponent.list_all_admin_taxes()
+            if res['result']:
+                serialized_data = admin_tax_list_response_schema.dump(res['data'])
+                return response_success(serialized_data)
             else:
-                return response_success([])  # Lista vacía en lugar de not_found
-                
-        except Exception as err:
-            HandleLogs.write_error(f"Error en AdminTaxServiceGet: {err}")
-            return response_error(f"Error interno del servidor: {str(err)}")
+                return response_error(res['message'])
+        except Exception as e:
+            HandleLogs.write_error(f"Error en AdminTaxServiceGet: {e}")
+            return response_error("Error interno al obtener la lista de impuestos.")
 
 
 class AdminTaxServiceGetById(Resource):
-    """Servicio para obtener un impuesto por ID"""
-    
     @staticmethod
     def get(tax_id):
         try:
-            HandleLogs.write_log(f"Obteniendo impuesto por ID: {tax_id}")
-            
-            # Validar token
             token = request.headers.get('tokenapp')
-            if token is None:
-                return response_error("Error: No se ha podido obtener el Token")
-
+            if not token:
+                return response_error("Token no proporcionado", status_code=400)
             if not TokenComponent.Token_Validate(token):
                 return response_unauthorize()
 
-            # Validar ID
-            if not isinstance(tax_id, int) or tax_id <= 0:
-                return response_error("ID de impuesto inválido")
-
-            # Obtener impuesto
-            tax = AdminTaxComponent.get_admin_tax_by_id(tax_id)
-            
-            if tax:
-                # Serializar respuesta
-                result = admin_tax_response_schema.dump(tax)
-                return response_success(result)
+            res = AdminTaxComponent.get_admin_tax_by_id(tax_id)
+            if res['result']:
+                if res['data']:
+                    serialized_data = admin_tax_response_schema.dump(res['data'])
+                    return response_success(serialized_data)
+                else:
+                    return response_not_found(res['message'])
             else:
-                return response_not_found(f"Impuesto con ID {tax_id} no encontrado")
-                
-        except Exception as err:
-            HandleLogs.write_error(f"Error en AdminTaxServiceGetById: {err}")
-            return response_error(f"Error interno del servidor: {str(err)}")
+                return response_error(res['message'])
+        except Exception as e:
+            HandleLogs.write_error(f"Error en AdminTaxServiceGetById: {e}")
+            return response_error("Error interno al obtener el impuesto por ID.")
 
 
 class AdminTaxServiceAdd(Resource):
-    """Servicio para crear un nuevo impuesto"""
-    
     @staticmethod
     def post():
         try:
-            HandleLogs.write_log("Creando nuevo impuesto")
-            
-            # Validar token
             token = request.headers.get('tokenapp')
-            if token is None:
-                return response_error("Error: No se ha podido obtener el Token")
-
+            if not token:
+                return response_error("Token no proporcionado", status_code=400)
             if not TokenComponent.Token_Validate(token):
                 return response_unauthorize()
 
-            # Obtener datos JSON
             json_data = request.get_json()
             if not json_data:
-                return response_error("No se han enviado datos para procesar")
+                return response_error("Datos JSON no proporcionados", status_code=400)
 
-            # Validar datos con Marshmallow
-            try:
-                validated_data = admin_tax_insert_schema.load(json_data)
-            except ValidationError as err:
-                HandleLogs.write_error(f"Error de validación: {err.messages}")
-                return response_error("Errores de validación", err.messages)
+            validated_data = admin_tax_insert_schema.load(json_data)
 
-            # Crear impuesto
-            result = AdminTaxComponent.add_admin_tax(validated_data)
-
-            if result['result']:
-                # Obtener el impuesto creado para retornarlo
-                if result['data'] and 'data' in result['data']:
-                    new_tax_id = result['data']['data']
-                    created_tax = AdminTaxComponent.get_admin_tax_by_id(new_tax_id)
-                    if created_tax:
-                        serialized_tax = admin_tax_response_schema.dump(created_tax)
-                        return response_success(serialized_tax, "Impuesto creado exitosamente")
-                
-                return response_success(
-                    {"tax_id": result['data']}, 
-                    "Impuesto creado exitosamente"
-                )
+            res = AdminTaxComponent.insert_admin_tax(validated_data)
+            if res['result']:
+                return response_inserted(res['data'])
             else:
-                return response_error(result['message'] or "Error al crear el impuesto")
-
-        except Exception as err:
-            HandleLogs.write_error(f"Error en AdminTaxServiceAdd: {err}")
-            return response_error(f"Error interno del servidor: {str(err)}")
+                return response_error(res['message'])
+        except ValidationError as err:
+            HandleLogs.write_error(f"Error de validación en AdminTaxServiceAdd: {err.messages}")
+            return response_error(f"Error de validación: {err.messages}", status_code=400)
+        except Exception as e:
+            HandleLogs.write_error(f"Error en AdminTaxServiceAdd: {e}")
+            return response_error("Error interno al agregar impuesto.")
 
 
 class AdminTaxServiceUpdate(Resource):
-    """Servicio para actualizar un impuesto existente"""
-    
     @staticmethod
-    def put(tax_id):
+    def put(tax_id): # <--- CORREGIDO: AHORA ESPERA tax_id COMO ARGUMENTO DE LA URL
         try:
-            HandleLogs.write_log(f"Actualizando impuesto ID: {tax_id}")
-            
-            # Validar token
             token = request.headers.get('tokenapp')
-            if token is None:
-                return response_error("Error: No se ha podido obtener el Token")
-
+            if not token:
+                return response_error("Token no proporcionado", status_code=400)
             if not TokenComponent.Token_Validate(token):
                 return response_unauthorize()
 
-            # Obtener datos JSON
             json_data = request.get_json()
             if not json_data:
-                return response_error("No se han enviado datos para procesar")
+                return response_error("Datos JSON no proporcionados", status_code=400)
 
-            # Agregar tax_id a los datos
+            # Aseguramos que el tax_id de la URL esté en los datos para la validación y el componente
+            # Esto es crucial porque el esquema de actualización espera 'tax_id' en los datos
             json_data['tax_id'] = tax_id
 
-            # Validar datos con Marshmallow
             try:
                 validated_data = admin_tax_update_schema.load(json_data)
             except ValidationError as err:
-                HandleLogs.write_error(f"Error de validación: {err.messages}")
-                return response_error("Errores de validación", err.messages)
+                HandleLogs.write_error(f"Error de validación en AdminTaxServiceUpdate: {err.messages}")
+                return response_error(f"Error de validación: {err.messages}", status_code=400)
 
-            # Verificar que el impuesto existe antes de actualizar
-            existing_tax = AdminTaxComponent.get_admin_tax_by_id(tax_id)
-            if not existing_tax:
-                return response_not_found(f"Impuesto con ID {tax_id} no encontrado")
-
-            # Actualizar impuesto
-            result = AdminTaxComponent.update_admin_tax(validated_data)
-
-            if result['result']:
-                # Obtener el impuesto actualizado
+            res = AdminTaxComponent.update_admin_tax(validated_data)
+            if res['result']:
+                # Obtenemos el impuesto actualizado para devolverlo en la respuesta
                 updated_tax = AdminTaxComponent.get_admin_tax_by_id(tax_id)
-                if updated_tax:
-                    serialized_tax = admin_tax_response_schema.dump(updated_tax)
-                    return response_success(serialized_tax, "Impuesto actualizado exitosamente")
-                else:
-                    return response_success(validated_data, "Impuesto actualizado exitosamente")
+                serialized_tax = admin_tax_response_schema.dump(updated_tax)
+                # Usamos response_success_personal para devolver datos y mensaje
+                return response_success_personal(True, "Impuesto actualizado exitosamente", serialized_tax)
+            elif res['message'].startswith("El impuesto con ID"):
+                return response_not_found(res['message'])
             else:
-                return response_error(result['message'] or "Error al actualizar el impuesto")
-
-        except Exception as err:
-            HandleLogs.write_error(f"Error en AdminTaxServiceUpdate: {err}")
-            return response_error(f"Error interno del servidor: {str(err)}")
+                return response_error(res['message'])
+        except Exception as e:
+            HandleLogs.write_error(f"Error en AdminTaxServiceUpdate: {e}")
+            return response_error("Error interno al actualizar impuesto.")
 
     @staticmethod
-    def patch(tax_id):
-        """Método PATCH para actualizaciones parciales (redirige a PUT)"""
+    def patch(tax_id): # <--- CORREGIDO: AHORA ESPERA tax_id COMO ARGUMENTO DE LA URL
+        # Redirige al método put, pasándole el tax_id que recibe de la URL
         return AdminTaxServiceUpdate.put(tax_id)
 
 
 class AdminTaxServiceDelete(Resource):
-    """Servicio para eliminar (desactivar) un impuesto"""
-    
     @staticmethod
     def delete(tax_id):
         try:
-            HandleLogs.write_log(f"Eliminando impuesto ID: {tax_id}")
-            
-            # Validar token
             token = request.headers.get('tokenapp')
-            if token is None:
-                return response_error("Error: No se ha podido obtener el Token")
-
+            if not token:
+                return response_error("Token no proporcionado", status_code=400)
             if not TokenComponent.Token_Validate(token):
                 return response_unauthorize()
 
-            # Obtener usuario del token
-            user_token = TokenComponent.User(token)
-            if not user_token:
-                return response_error("No se pudo obtener el usuario del token")
+            # tax_id ya está disponible como argumento de la URL
 
-            # Validar ID
-            if not isinstance(tax_id, int) or tax_id <= 0:
-                return response_error("ID de impuesto inválido")
+            json_data = request.get_json()
+            if not json_data or 'user_process' not in json_data:
+                return response_error("El campo 'user_process' es requerido en el cuerpo de la petición.",
+                                      status_code=400)
 
-            # Verificar que el impuesto existe
-            existing_tax = AdminTaxComponent.get_admin_tax_by_id(tax_id)
-            if not existing_tax:
-                return response_not_found(f"Impuesto con ID {tax_id} no encontrado")
+            # Cargamos los datos para validación, incluyendo el tax_id de la URL y user_process del JSON
+            validated_data = admin_tax_delete_schema.load({'tax_id': tax_id, 'user_process': json_data['user_process']})
+            user_process = validated_data['user_process']
 
-            # Verificar si se puede eliminar
-            usage_info = AdminTaxComponent.get_tax_usage_info(tax_id)
-            if not usage_info["can_delete"]:
-                return response_error(usage_info["reason"])
-
-            # Eliminar impuesto
-            success, message = AdminTaxComponent.logical_delete_admin_tax(tax_id, user_token)
-
-            if success:
-                return response_success(
-                    {"tax_id": tax_id, "deleted": True}, 
-                    message
-                )
+            res = AdminTaxComponent.delete_admin_tax(tax_id, user_process)
+            if res['result']:
+                # Usamos response_success_personal para incluir datos y mensaje
+                return response_success_personal(True, res['message'], {"tax_id": tax_id})
+            elif res['message'].startswith("El impuesto con ID"):
+                return response_not_found(res['message'])
             else:
-                return response_error(message)
-
-        except Exception as err:
-            HandleLogs.write_error(f"Error en AdminTaxServiceDelete: {err}")
-            return response_error(f"Error interno del servidor: {str(err)}")
-
-
-class AdminTaxServiceCheck(Resource):
-    """Servicio para verificar si un impuesto se puede eliminar"""
-    
-    @staticmethod
-    def get(tax_id):
-        try:
-            HandleLogs.write_log(f"Verificando si se puede eliminar impuesto ID: {tax_id}")
-            
-            # Validar token
-            token = request.headers.get('tokenapp')
-            if token is None:
-                return response_error("Error: No se ha podido obtener el Token")
-
-            if not TokenComponent.Token_Validate(token):
-                return response_unauthorize()
-
-            # Validar ID
-            if not isinstance(tax_id, int) or tax_id <= 0:
-                return response_error("ID de impuesto inválido")
-
-            # Verificar que el impuesto existe
-            existing_tax = AdminTaxComponent.get_admin_tax_by_id(tax_id)
-            if not existing_tax:
-                return response_not_found(f"Impuesto con ID {tax_id} no encontrado")
-
-            # Obtener información de uso
-            usage_info = AdminTaxComponent.get_tax_usage_info(tax_id)
-            
-            return response_success(usage_info)
-
-        except Exception as err:
-            HandleLogs.write_error(f"Error en AdminTaxServiceCheck: {err}")
-            return response_error(f"Error interno del servidor: {str(err)}")
+                return response_error(res['message'])
+        except ValidationError as err:
+            HandleLogs.write_error(f"Error de validación en AdminTaxServiceDelete: {err.messages}")
+            return response_error(f"Error de validación: {err.messages}", status_code=400)
+        except Exception as e:
+            HandleLogs.write_error(f"Error en AdminTaxServiceDelete: {e}")
+            return response_error("Error interno al eliminar impuesto.")
 
 
-# Clases adicionales para mantener compatibilidad con nombres anteriores
-class admin_Tax_service_get(AdminTaxServiceGet):
-    """Clase de compatibilidad - usar AdminTaxServiceGet"""
-    pass
-
-class admin_Tax_getbyid(AdminTaxServiceGetById):
-    """Clase de compatibilidad - usar AdminTaxServiceGetById"""
-    pass
-
-class admin_Tax_service_add(AdminTaxServiceAdd):
-    """Clase de compatibilidad - usar AdminTaxServiceAdd"""
-    pass
-
-class admin_Tax_service_Update(AdminTaxServiceUpdate):
-    """Clase de compatibilidad - usar AdminTaxServiceUpdate"""
-    pass
-
-class admin_Tax_service_Delete(AdminTaxServiceDelete):
-    """Clase de compatibilidad - usar AdminTaxServiceDelete"""
-    pass
+# Clases de compatibilidad
+class admin_Tax_service_get(AdminTaxServiceGet): pass
+class admin_Tax_getbyid(AdminTaxServiceGetById): pass
+class admin_Tax_service_add(AdminTaxServiceAdd): pass
+class admin_Tax_service_Update(AdminTaxServiceUpdate): pass
+class admin_Tax_service_Delete(AdminTaxServiceDelete): pass

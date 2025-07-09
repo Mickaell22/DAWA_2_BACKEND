@@ -1,3 +1,5 @@
+# your_project_root/src/api/Model/Admin/AdminTaxModel.py
+
 from datetime import datetime
 from decimal import Decimal
 
@@ -29,11 +31,11 @@ class AdminTaxModel:
         self.date_deleted = date_deleted
 
     def to_dict(self):
-        """Convertir el modelo a diccionario"""
+        """Convierte el objeto a un diccionario para JSON/Marshmallow."""
         return {
             'tax_id': self.tax_id,
             'tax_name': self.tax_name,
-            'tax_percentage': float(self.tax_percentage) if self.tax_percentage else None,
+            'tax_percentage': float(self.tax_percentage) if self.tax_percentage is not None else None,
             'tax_description': self.tax_description,
             'tax_state': self.tax_state,
             'user_created': self.user_created,
@@ -49,13 +51,13 @@ class AdminTaxModel:
 
     @staticmethod
     def from_dict(data):
-        """Crear instancia del modelo desde diccionario"""
+        """Crea una instancia de AdminTaxModel desde un diccionario."""
         return AdminTaxModel(
             tax_id=data.get('tax_id'),
             tax_name=data.get('tax_name'),
             tax_percentage=Decimal(str(data.get('tax_percentage'))) if data.get('tax_percentage') is not None else None,
             tax_description=data.get('tax_description'),
-            tax_state=data.get('tax_state', True),
+            tax_state=data.get('tax_state', True),  # Por defecto a True si no se especifica
             user_created=data.get('user_created'),
             date_created=data.get('date_created'),
             user_modified=data.get('user_modified'),
@@ -64,67 +66,17 @@ class AdminTaxModel:
             date_deleted=data.get('date_deleted')
         )
 
-    @staticmethod
-    def from_db_row(row):
-        """Crear instancia del modelo desde fila de base de datos"""
-        if not row:
-            return None
-
-        return AdminTaxModel(
-            tax_id=row[0] if len(row) > 0 else None,
-            tax_name=row[1] if len(row) > 1 else None,
-            tax_percentage=row[2] if len(row) > 2 else None,
-            tax_description=row[3] if len(row) > 3 else None,
-            tax_state=row[4] if len(row) > 4 else True,
-            user_created=row[5] if len(row) > 5 else None,
-            date_created=row[6] if len(row) > 6 else None,
-            user_modified=row[7] if len(row) > 7 else None,
-            date_modified=row[8] if len(row) > 8 else None,
-            user_deleted=row[9] if len(row) > 9 else None,
-            date_deleted=row[10] if len(row) > 10 else None
-        )
-
-    def __str__(self):
-        return f"AdminTax(id={self.tax_id}, name='{self.tax_name}', percentage={self.tax_percentage}%)"
-
-    def __repr__(self):
-        return self.__str__()
-
-    def is_active(self):
-        """Verificar si el impuesto está activo"""
-        return self.tax_state is True
-
-    def get_percentage_as_decimal(self):
-        """Obtener el porcentaje como decimal para cálculos"""
-        if self.tax_percentage:
-            return self.tax_percentage / 100
-        return Decimal('0')
-
-    def calculate_tax_amount(self, base_amount):
-        """Calcular el monto del impuesto sobre un monto base"""
-        if not self.tax_percentage or not base_amount:
-            return Decimal('0')
-
-        base_decimal = Decimal(str(base_amount))
-        percentage_decimal = self.get_percentage_as_decimal()
-
-        return base_decimal * percentage_decimal
-
     def validate(self):
-        """Validar que el modelo tenga datos válidos"""
+        """Valida los campos básicos del modelo (uso opcional, Marshmallow es mejor para esto)."""
         errors = []
-
         if not self.tax_name or not self.tax_name.strip():
-            errors.append("El nombre del impuesto es requerido")
-
+            errors.append("El nombre del impuesto es requerido.")
         if self.tax_percentage is None:
-            errors.append("El porcentaje del impuesto es requerido")
-        elif self.tax_percentage < 0:
-            errors.append("El porcentaje del impuesto no puede ser negativo")
-        elif self.tax_percentage > 100:
-            errors.append("El porcentaje del impuesto no puede ser mayor a 100%")
+            errors.append("El porcentaje del impuesto es requerido.")
+        elif not isinstance(self.tax_percentage,
+                            (int, float, Decimal)) or self.tax_percentage < 0 or self.tax_percentage > 100:
+            errors.append("El porcentaje del impuesto debe ser un número entre 0 y 100.")
 
-        return {
-            'valid': len(errors) == 0,
-            'errors': errors
-        }
+        # Considera otras validaciones de negocio aquí si son necesarias antes de interactuar con la DB
+
+        return errors

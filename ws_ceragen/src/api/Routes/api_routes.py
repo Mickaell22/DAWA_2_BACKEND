@@ -70,7 +70,6 @@ from ..Services.Admin.AdminTaxService import (
     AdminTaxServiceAdd,
     AdminTaxServiceUpdate,
     AdminTaxServiceDelete,
-    AdminTaxServiceCheck
 )
 
 # Servicios de Facturación
@@ -282,7 +281,7 @@ def load_routes(api):
     api.add_resource(AdminTaxServiceAdd, '/admin/taxes')                          # POST - Crear nuevo impuesto
     api.add_resource(AdminTaxServiceUpdate, '/admin/taxes/<int:tax_id>')          # PUT/PATCH - Actualizar impuesto
     api.add_resource(AdminTaxServiceDelete, '/admin/taxes/<int:tax_id>')          # DELETE - Eliminar impuesto
-    api.add_resource(AdminTaxServiceCheck, '/admin/taxes/<int:tax_id>/check')     # GET - Verificar si se puede eliminar
+    #api.add_resource(AdminTaxServiceCheck, '/admin/taxes/<int:tax_id>/check')     # GET - Verificar si se puede eliminar
 
     # 📋 Rutas de compatibilidad con versión anterior (OPCIONAL - mantener si es necesario)
     # api.add_resource(AdminTaxServiceGet, '/admin/Tax/list')                     # Compatibilidad: Listar todos
