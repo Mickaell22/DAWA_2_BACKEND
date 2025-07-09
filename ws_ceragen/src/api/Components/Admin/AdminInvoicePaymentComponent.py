@@ -110,6 +110,27 @@ class Invoice_Payment_Component:
             return 0
 
     @staticmethod
+    def GetTotalIncomeAmount():
+        try:
+            query = """
+                SELECT COALESCE(SUM(inp_amount), 0) as total_income
+                FROM ceragen.admin_invoice_payment
+                WHERE inp_state = true
+            """
+            result = DataBaseHandle.getRecords(query, 1)
+
+            if result["result"] and result["data"]:
+                # result["data"] es un dict si usamos RealDictCursor
+                # Si es tupla, usa result["data"][0]
+                total_income = result["data"]["total_income"]
+                return float(total_income) if isinstance(total_income, Decimal) else total_income
+
+            return 0
+        except Exception as err:
+            HandleLogs.write_error(err)
+            return 0
+
+    @staticmethod
     def AddInvoicePayment(data_to_insert):
         try:
             v_message = None

@@ -27,6 +27,24 @@ class admin_Invoice_payment_service_get(Resource):
             HandleLogs.write_error(err)
             return response_error(str(err))
 
+class admin_Invoice_payment_total_income(Resource):
+    @staticmethod
+    def get():
+        try:
+            HandleLogs.write_log("Consulta total de ingresos por pagos")
+            token = request.headers.get('tokenapp')
+            if token is None:
+                return response_error("Error: No se ha podido obtener el token")
+            if not TokenComponent.Token_Validate(token):
+                return response_unauthorize()
+
+            total_income = Invoice_Payment_Component.GetTotalIncomeAmount()
+            HandleLogs.write_log(total_income)
+            return response_success({'total_income': total_income})
+        except Exception as err:
+            HandleLogs.write_error(err)
+            return response_error(str(err))
+
 
 class admin_Invoice_payment_getbyid(Resource):
     @staticmethod
