@@ -69,7 +69,7 @@ from ..Services.Admin.AdminTaxService import (
     AdminTaxServiceGetById,
     AdminTaxServiceAdd,
     AdminTaxServiceUpdate,
-    AdminTaxServiceDelete,
+    AdminTaxServiceDelete
 )
 
 # Servicios de Facturación
@@ -93,7 +93,6 @@ from ..Services.Admin.AdminInvoiceTaxService import (
 # Servicios de Pagos de Factura
 from ..Services.Admin.AdminInvoicePaymentService import (
     admin_Invoice_payment_service_get,
-    admin_Invoice_payment_total_income,
     admin_Invoice_payment_getbyid,
     admin_Invoice_payment_service_add,
     admin_Invoice_payment_service_Update,
@@ -195,7 +194,6 @@ from ..Services.Admin.AdminTherapyService import (
 )
 from ..Services.Admin.AdminTherapyReportService import AdminTherapyReportService
 
-
 # Servicios de Producto
 from ..Services.Admin.AdminProductService import (
     AdminProductService_get,
@@ -249,11 +247,12 @@ from ..Services.Admin.AdminAppointmentService import (
 
 from ..Services.Admin.AdminPatientReportService import AdminPatientReportService
 
+
 def load_routes(api):
     """
     Función para cargar todas las rutas de la API de manera organizada
     """
-    
+
     # ===============================================================================
     # RUTAS DE ADMINISTRACIÓN - PACIENTES
     # ===============================================================================
@@ -263,6 +262,7 @@ def load_routes(api):
     api.add_resource(AdminPatientService_update, '/admin/patients/update')
     api.add_resource(AdminPatientService_delete, '/admin/patients/delete/<int:pat_id>/<string:user>')
     api.add_resource(AdminPatientReportService, '/admin/patients/report')
+
     # ===============================================================================
     # RUTAS DE ADMINISTRACIÓN - CLIENTES
     # ===============================================================================
@@ -275,21 +275,13 @@ def load_routes(api):
     # ===============================================================================
     # 🆕 RUTAS DE ADMINISTRACIÓN - IMPUESTOS (NUEVA IMPLEMENTACIÓN UNIFICADA)
     # ===============================================================================
-    
-    # Rutas principales RESTful
-    api.add_resource(AdminTaxServiceGet, '/admin/taxes')                          # GET - Lista todos los impuestos
-    api.add_resource(AdminTaxServiceGetById, '/admin/taxes/<int:tax_id>')         # GET - Obtener por ID
-    api.add_resource(AdminTaxServiceAdd, '/admin/taxes')                          # POST - Crear nuevo impuesto
-    api.add_resource(AdminTaxServiceUpdate, '/admin/taxes/<int:tax_id>')          # PUT/PATCH - Actualizar impuesto
-    api.add_resource(AdminTaxServiceDelete, '/admin/taxes/<int:tax_id>')          # DELETE - Eliminar impuesto
-    #api.add_resource(AdminTaxServiceCheck, '/admin/taxes/<int:tax_id>/check')     # GET - Verificar si se puede eliminar
 
-    # 📋 Rutas de compatibilidad con versión anterior (OPCIONAL - mantener si es necesario)
-    # api.add_resource(AdminTaxServiceGet, '/admin/Tax/list')                     # Compatibilidad: Listar todos
-    # api.add_resource(AdminTaxServiceGetById, '/admin/Tax/list/<int:id>')        # Compatibilidad: Obtener por ID
-    # api.add_resource(AdminTaxServiceAdd, '/admin/Tax/add')                      # Compatibilidad: Agregar nuevo
-    # api.add_resource(AdminTaxServiceUpdate, '/admin/Tax/update')                # Compatibilidad: Actualizar
-    # api.add_resource(AdminTaxServiceDelete, '/admin/Tax/delete/<int:id>')       # Compatibilidad: Eliminar
+    # Rutas principales RESTful
+    api.add_resource(AdminTaxServiceGet, '/admin/taxes')  # GET - Lista todos los impuestos
+    api.add_resource(AdminTaxServiceGetById, '/admin/taxes/<int:tax_id>')  # GET - Obtener por ID
+    api.add_resource(AdminTaxServiceAdd, '/admin/taxes')  # POST - Crear nuevo impuesto
+    api.add_resource(AdminTaxServiceUpdate, '/admin/taxes/<int:tax_id>')  # PUT/PATCH - Actualizar impuesto
+    api.add_resource(AdminTaxServiceDelete, '/admin/taxes/<int:tax_id>')  # DELETE - Eliminar impuesto
 
     # ===============================================================================
     # RUTAS DE ADMINISTRACIÓN - TERAPIAS
@@ -326,7 +318,8 @@ def load_routes(api):
     api.add_resource(AdminPatientMedicalHistoryService_getbyid, '/admin/patient-medical-history/list/<int:hist_id>')
     api.add_resource(AdminPatientMedicalHistoryService_add, '/admin/patient-medical-history/add')
     api.add_resource(AdminPatientMedicalHistoryService_update, '/admin/patient-medical-history/update')
-    api.add_resource(AdminPatientMedicalHistoryService_delete, '/admin/patient-medical-history/delete/<int:hist_id>/<string:user>')
+    api.add_resource(AdminPatientMedicalHistoryService_delete,
+                     '/admin/patient-medical-history/delete/<int:hist_id>/<string:user>')
 
     # ===============================================================================
     # RUTAS DE ADMINISTRACIÓN - PERSONAS
@@ -405,7 +398,6 @@ def load_routes(api):
 
     # Pagos de facturación
     api.add_resource(admin_Invoice_payment_service_get, '/admin/invoice/payment/list')
-    api.add_resource(admin_Invoice_payment_total_income, '/admin/invoice/payment/total_income')
     api.add_resource(admin_Invoice_payment_getbyid, '/admin/invoice/payment/list/<int:id>')
     api.add_resource(admin_Invoice_payment_service_add, '/admin/invoice/payment/add')
     api.add_resource(admin_Invoice_payment_service_Update, '/admin/invoice/payment/update')
@@ -528,7 +520,7 @@ def load_routes(api):
     api.add_resource(ErrorService, '/Error/list')
 
     # ===============================================================================
-    # RUTAS DE CITAS - PRINCIPALES
+    # RUTAS DE CITAS - PRINCIPALES (SISTEMA COMPLEJO)
     # ===============================================================================
     api.add_resource(AdminAppointmentService_get, '/admin/appointments/list')
     api.add_resource(AdminAppointmentService_getbyid, '/admin/appointments/list/<int:appointment_id>')
