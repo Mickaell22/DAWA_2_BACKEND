@@ -69,8 +69,7 @@ from ..Services.Admin.AdminTaxService import (
     AdminTaxServiceGetById,
     AdminTaxServiceAdd,
     AdminTaxServiceUpdate,
-    AdminTaxServiceDelete,
-    AdminTaxServiceCheck
+    AdminTaxServiceDelete
 )
 
 # Servicios de Facturación
@@ -94,7 +93,6 @@ from ..Services.Admin.AdminInvoiceTaxService import (
 # Servicios de Pagos de Factura
 from ..Services.Admin.AdminInvoicePaymentService import (
     admin_Invoice_payment_service_get,
-    admin_Invoice_payment_total_income,
     admin_Invoice_payment_getbyid,
     admin_Invoice_payment_service_add,
     admin_Invoice_payment_service_Update,
@@ -247,22 +245,6 @@ from ..Services.Admin.AdminAppointmentService import (
     AdminAppointmentService_products
 )
 
-# 🆕 SERVICIOS DE CITAS SIMPLIFICADAS V2 - IMPORTACIÓN AGREGADA
-from ..Services.Admin.SimpleAppointmentService import (
-    SimpleAppointmentServiceV2_get,
-    SimpleAppointmentServiceV2_getbyid,
-    SimpleAppointmentServiceV2_schedule,
-    SimpleAppointmentServiceV2_reschedule,
-    SimpleAppointmentServiceV2_update,
-    SimpleAppointmentServiceV2_cancel,
-    SimpleAppointmentServiceV2_execute,
-    SimpleAppointmentServiceV2_statistics,
-    SimpleAppointmentServiceV2_by_therapist,
-    SimpleAppointmentServiceV2_patients,
-    SimpleAppointmentServiceV2_therapies,
-    SimpleAppointmentServiceV2_therapists
-)
-
 from ..Services.Admin.AdminPatientReportService import AdminPatientReportService
 
 
@@ -300,7 +282,6 @@ def load_routes(api):
     api.add_resource(AdminTaxServiceAdd, '/admin/taxes')  # POST - Crear nuevo impuesto
     api.add_resource(AdminTaxServiceUpdate, '/admin/taxes/<int:tax_id>')  # PUT/PATCH - Actualizar impuesto
     api.add_resource(AdminTaxServiceDelete, '/admin/taxes/<int:tax_id>')  # DELETE - Eliminar impuesto
-    api.add_resource(AdminTaxServiceCheck, '/admin/taxes/<int:tax_id>/check')  # GET - Verificar si se puede eliminar
 
     # ===============================================================================
     # RUTAS DE ADMINISTRACIÓN - TERAPIAS
@@ -417,7 +398,6 @@ def load_routes(api):
 
     # Pagos de facturación
     api.add_resource(admin_Invoice_payment_service_get, '/admin/invoice/payment/list')
-    api.add_resource(admin_Invoice_payment_total_income, '/admin/invoice/payment/total_income')
     api.add_resource(admin_Invoice_payment_getbyid, '/admin/invoice/payment/list/<int:id>')
     api.add_resource(admin_Invoice_payment_service_add, '/admin/invoice/payment/add')
     api.add_resource(admin_Invoice_payment_service_Update, '/admin/invoice/payment/update')
@@ -561,37 +541,3 @@ def load_routes(api):
     api.add_resource(AdminAppointmentService_therapy_types, '/admin/appointments/therapy-types')
     api.add_resource(AdminAppointmentService_medical_staff, '/admin/appointments/medical-staff')
     api.add_resource(AdminAppointmentService_products, '/admin/appointments/products/<int:therapy_type_id>')
-
-    # ===============================================================================
-    # 🆕 RUTAS DE CITAS SIMPLIFICADAS V2 - NUEVAS RUTAS AGREGADAS
-    # ===============================================================================
-
-    # Rutas principales CRUD para citas simplificadas
-    api.add_resource(SimpleAppointmentServiceV2_get,
-                     '/admin/simple-appointments')  # GET - Listar todas las citas con filtros
-    api.add_resource(SimpleAppointmentServiceV2_getbyid,
-                     '/admin/simple-appointments/<int:appointment_id>')  # GET - Obtener cita por ID
-    api.add_resource(SimpleAppointmentServiceV2_schedule,
-                     '/admin/simple-appointments/schedule')  # POST - Agendar nueva cita
-    api.add_resource(SimpleAppointmentServiceV2_reschedule,
-                     '/admin/simple-appointments/reschedule')  # PATCH - Reagendar cita existente
-    api.add_resource(SimpleAppointmentServiceV2_update,
-                     '/admin/simple-appointments/<int:appointment_id>')  # PUT - Actualizar información completa de cita
-    api.add_resource(SimpleAppointmentServiceV2_cancel,
-                     '/admin/simple-appointments/<int:appointment_id>')  # DELETE - Cancelar cita
-    api.add_resource(SimpleAppointmentServiceV2_execute,
-                     '/admin/simple-appointments/execute/<int:appointment_id>')  # PATCH - Marcar sesión como ejecutada
-
-    # Rutas auxiliares para formularios y filtros
-    api.add_resource(SimpleAppointmentServiceV2_patients,
-                     '/admin/simple-appointments/patients')  # GET - Lista de pacientes para dropdown
-    api.add_resource(SimpleAppointmentServiceV2_therapies,
-                     '/admin/simple-appointments/therapies')  # GET - Lista de terapias para dropdown
-    api.add_resource(SimpleAppointmentServiceV2_therapists,
-                     '/admin/simple-appointments/therapists')  # GET - Lista de terapeutas para dropdown
-
-    # Rutas de reportes y estadísticas
-    api.add_resource(SimpleAppointmentServiceV2_statistics,
-                     '/admin/simple-appointments/statistics')  # GET - Estadísticas con filtros opcionales
-    api.add_resource(SimpleAppointmentServiceV2_by_therapist,
-                     '/admin/simple-appointments/by-therapist/<string:therapist_name>')  # GET - Citas por terapeuta
