@@ -138,6 +138,9 @@ from ..Services.Clinic.ClinicAllergyCatalogService import (
     clinic_AllergyCatalog_service_Delete
 )
 
+from ..Services.Admin.AdminInvoiceUploadProof import (admin_Invoice_Upload_Proof,
+                                                      admin_Invoice_Proof_Image)
+
 # ----------- MÓDULO DE SEGURIDAD ----------------------------
 
 # Servicios de Autenticación
@@ -382,7 +385,10 @@ def load_routes(api):
     # ===============================================================================
     # RUTAS DE ADMINISTRACIÓN - FACTURACIÓN
     # ===============================================================================
-    
+    # Subida de imagenes
+    api.add_resource(admin_Invoice_Upload_Proof, '/admin/invoice/upload-proof')
+    api.add_resource(admin_Invoice_Proof_Image, '/admin/invoice/proof/<string:nombre_archivo>')
+
     # Facturas principales
     api.add_resource(admin_Invoice_service_get, '/admin/invoice/list')
     api.add_resource(admin_Invoice_getbyid, '/admin/invoice/<int:id>')
