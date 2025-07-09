@@ -116,15 +116,11 @@ class AdminPromotionComponent:
     @staticmethod
     def delete_promotion(ppr_id, user):
         try:
-            print("DEBUG - Eliminando promoción:", ppr_id, "por usuario:", user)
-            sql = """
-                UPDATE ceragen.admin_product_promotion
-                SET ppr_state=false, user_deleted=%s, date_deleted=now()
-                WHERE ppr_id=%s
-            """
-            params = (user, ppr_id)
+            print("DEBUG - Eliminando promoción físicamente:", ppr_id, "por usuario:", user)
+            sql = "DELETE FROM ceragen.admin_product_promotion WHERE ppr_id = %s"
+            params = (ppr_id,)
             DataBaseHandle.execute(sql, params)
-            return {'result': True, 'message': 'Promoción eliminada'}
+            return {'result': True, 'message': 'Promoción eliminada permanentemente'}
         except Exception as err:
             import traceback
             print("DEBUG - Error en delete_promotion:", err)
