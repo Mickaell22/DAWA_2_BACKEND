@@ -147,3 +147,19 @@ class admin_Invoice_payment_service_Delete(Resource):
         except Exception as err:
             HandleLogs.write_error(err)
             return response_error(str(err))
+
+class AdminInvoicePaymentDashboardIncome(Resource):
+    @staticmethod
+    def get():
+        try:
+            HandleLogs.write_log("Dashboard - ingresos mensuales")
+            token = request.headers.get('tokenapp')
+            if not token or not TokenComponent.Token_Validate(token):
+                return response_unauthorize()
+
+            data = Invoice_Payment_Component.GetMonthlyIncomeDashboard()
+            return response_success(data)
+
+        except Exception as err:
+            HandleLogs.write_error(f"Error dashboard ingresos: {err}")
+            return response_error("Error al obtener ingresos mensuales para dashboard")

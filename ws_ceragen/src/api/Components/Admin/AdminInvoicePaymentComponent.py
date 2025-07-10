@@ -4,6 +4,9 @@ from datetime import datetime
 from flask import Flask, jsonify, request
 from ....utils.general.response import internal_response
 from decimal import Decimal
+from dateutil.relativedelta import relativedelta
+from datetime import datetime
+
 
 def _convert_decimals_to_floats(records):
     if isinstance(records, list):
@@ -256,3 +259,48 @@ class Invoice_Payment_Component:
         except Exception as err:
             HandleLogs.write_error(err)
             return False, f"Error inesperado: {str(err)}"
+
+        # DASHBOARD FUNCTIONS META DEL AÑO
+
+    @staticmethod
+    def GetMonthlyIncomeDashboard():
+        try:
+            query = """
+                SELECT 
+                    EXTRACT(MONTH FROM date_created) AS mes, 
+                    SUM(inp_amount) AS total_mes
+                FROM ceragen.admin_invoice_payment
+                WHERE EXTRACT(YEAR FROM date_created) = EXTRACT(YEAR FROM CURRENT_DATE)
+                  AND inp_state = true
+                GROUP BY mes
+                ORDER BY mes
+            """
+            resultados = DataBaseHandle.getRecords(query, 0)
+
+            HandleLogs.write_log(f"Resultados consulta mensual ingresos: {resultados}")
+
+            monthly_income = [0.0] * 12
+            if resultados and resultados.get('result') and resultados.get('data'):
+                for row in resultados['data']:
+                    mes = int(row['mes'])
+                    total = float(row['total_mes']) if row['total_mes'] is not None else 0
+                    monthly_income[mes - 1] = total
+
+            from datetime import datetime
+            mes_actual = datetime.now().month
+            current_month = monthly_income[mes_actual - 1]
+            previous_month = monthly_income[mes_actual - 2] if mes_actual > 1 else 0.0
+
+            return {
+                "monthly_income": monthly_income,
+                "current_month": current_month,
+                "previous_month": previous_month
+            }
+
+        except Exception as err:
+            HandleLogs.write_error(f"Error en GetMonthlyIncomeDashboard: {err}")
+            return {
+                "monthly_income": [0] * 12,
+                "current_month": 0,
+                "previous_month": 0
+            }

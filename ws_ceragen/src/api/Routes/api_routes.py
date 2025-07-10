@@ -97,7 +97,8 @@ from ..Services.Admin.AdminInvoicePaymentService import (
     admin_Invoice_payment_getbyid,
     admin_Invoice_payment_service_add,
     admin_Invoice_payment_service_Update,
-    admin_Invoice_payment_service_Delete
+    admin_Invoice_payment_service_Delete,
+AdminInvoicePaymentDashboardIncome
 )
 
 # Servicios de Métodos de Pago
@@ -400,6 +401,7 @@ def load_routes(api):
     # Pagos de facturación
     api.add_resource(admin_Invoice_payment_service_get, '/admin/invoice/payment/list')
     api.add_resource(admin_Invoice_payment_total_income, '/admin/invoice/payment/total_income')
+    api.add_resource(AdminInvoicePaymentDashboardIncome, '/admin/invoice/payment/dashboard_income')# dashboard
     api.add_resource(admin_Invoice_payment_getbyid, '/admin/invoice/payment/list/<int:id>')
     api.add_resource(admin_Invoice_payment_service_add, '/admin/invoice/payment/add')
     api.add_resource(admin_Invoice_payment_service_Update, '/admin/invoice/payment/update')
