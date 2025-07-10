@@ -52,15 +52,20 @@ class SimpleAppointmentComponent:
                 params = (start_date, end_date)
             else:
                 query = base_query
-                params = None
+                params = ()
 
             query += " ORDER BY sec_ses_agend_date ASC"
 
-            res = DataBaseHandle.getRecords(query, 0, params)
-            return json.loads(json.dumps(res, default=SimpleAppointmentComponent.json_serial))
+            response = DataBaseHandle.getRecords(query, 0, params)
+            
+            # Check if response is successful and extract data
+            if response and response.get('result') and response.get('data'):
+                return json.loads(json.dumps(response['data'], default=SimpleAppointmentComponent.json_serial))
+            else:
+                return []
         except Exception as err:
             HandleLogs.write_error(err)
-            return None
+            return []
 
     @staticmethod
     def get_appointment_by_id(appointment_id):
@@ -92,8 +97,10 @@ class SimpleAppointmentComponent:
                 WHERE sec_id = %s AND ses_state = true AND date_deleted IS NULL
             """
 
-            res = DataBaseHandle.getRecords(query, 0, (appointment_id,))
-            return res[0] if res else None
+            response = DataBaseHandle.getRecords(query, 0, (appointment_id,))
+            if response and response.get('result') and response.get('data'):
+                return response['data'][0] if response['data'] else None
+            return None
         except Exception as err:
             HandleLogs.write_error(err)
             return None
@@ -327,11 +334,15 @@ class SimpleAppointmentComponent:
 
             base_query += " ORDER BY sec_ses_agend_date"
 
-            res = DataBaseHandle.getRecords(base_query, 0, tuple(params))
-            return json.loads(json.dumps(res, default=SimpleAppointmentComponent.json_serial))
+            response = DataBaseHandle.getRecords(base_query, 0, tuple(params))
+            
+            if response and response.get('result') and response.get('data'):
+                return json.loads(json.dumps(response['data'], default=SimpleAppointmentComponent.json_serial))
+            else:
+                return []
         except Exception as err:
             HandleLogs.write_error(err)
-            return None
+            return []
 
     @staticmethod
     def get_daily_statistics(date_filter=None):
@@ -354,8 +365,10 @@ class SimpleAppointmentComponent:
                 AND date_deleted IS NULL
             """
 
-            res = DataBaseHandle.getRecords(query, 0, (date_filter,))
-            return res[0] if res else None
+            response = DataBaseHandle.getRecords(query, 0, (date_filter,))
+            if response and response.get('result') and response.get('data'):
+                return response['data'][0] if response['data'] else None
+            return None
         except Exception as err:
             HandleLogs.write_error(err)
             return None
