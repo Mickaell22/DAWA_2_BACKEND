@@ -248,6 +248,14 @@ from ..Services.Admin.AdminAppointmentService import (
 
 from ..Services.Admin.AdminPatientReportService import AdminPatientReportService
 
+# 🎯 SERVICIOS ADAPTADORES PARA CITAS SIMPLIFICADAS (FRONTEND)
+from ..Services.Admin.SimpleAppointmentFrontendAdapter import (
+    SimpleAppointmentFrontendList,
+    SimpleAppointmentFrontendById,
+    SimpleAppointmentFrontendSchedule,
+    SimpleAppointmentFrontendExecute
+)
+
 
 def load_routes(api):
     """
@@ -543,3 +551,19 @@ def load_routes(api):
     api.add_resource(AdminAppointmentService_therapy_types, '/admin/appointments/therapy-types')
     api.add_resource(AdminAppointmentService_medical_staff, '/admin/appointments/medical-staff')
     api.add_resource(AdminAppointmentService_products, '/admin/appointments/products/<int:therapy_type_id>')
+
+    # ===============================================================================
+    # 🎯 RUTAS DE CITAS SIMPLIFICADAS - COMPATIBILIDAD CON FRONTEND
+    # ===============================================================================
+
+    # Ruta que espera el frontend para listar citas
+    api.add_resource(SimpleAppointmentFrontendList, '/admin/simple-appointments')
+
+    # Ruta que espera el frontend para agendar citas
+    api.add_resource(SimpleAppointmentFrontendSchedule, '/admin/simple-appointments/schedule')
+
+    # Rutas que espera el frontend para operaciones por ID
+    api.add_resource(SimpleAppointmentFrontendById, '/admin/simple-appointments/<int:appointment_id>')
+
+    # Ruta que espera el frontend para ejecutar citas
+    api.add_resource(SimpleAppointmentFrontendExecute, '/admin/simple-appointments/execute/<int:appointment_id>')

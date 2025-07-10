@@ -60,12 +60,6 @@ class SimpleAppointmentScheduleRequest(Schema):
         missing=None,
         allow_none=True
     )
-    product_name = fields.Str(
-        required=False,
-        validate=validate.Length(max=200),
-        missing=None,
-        allow_none=True
-    )
 
     # Campos del terapeuta
     therapist_name = fields.Str(
@@ -170,11 +164,6 @@ class SimpleAppointmentUpdateRequest(Schema):
     therapy_type = fields.Str(
         required=False,
         validate=validate.Length(max=100),
-        allow_none=True
-    )
-    product_name = fields.Str(
-        required=False,
-        validate=validate.Length(max=200),
         allow_none=True
     )
     therapist_name = fields.Str(
