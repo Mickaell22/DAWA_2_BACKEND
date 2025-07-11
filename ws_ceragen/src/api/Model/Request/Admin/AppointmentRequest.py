@@ -31,3 +31,4 @@ class AppointmentUpdateRequest(Schema):
     sec_typ_id = fields.Int(required=False, validate=validate.Range(min=1))
     sec_med_staff_id = fields.Int(required=False, validate=validate.Range(min=1))
     user_process = fields.Str(required=True, validate=validate.Length(min=1, max=100))
+

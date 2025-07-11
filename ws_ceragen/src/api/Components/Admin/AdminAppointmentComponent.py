@@ -616,3 +616,27 @@ class AppointmentComponent:
         if isinstance(obj, Decimal):
             return float(obj)
         raise TypeError(f"Type {type(obj)} not serializable")
+
+    @staticmethod
+    def register_session(appointment_id, user_process):
+        """Incrementar el número de sesiones hechas para una cita"""
+        try:
+            # Obtener la cita actual
+            query = "SELECT sec_ses_number FROM ceragen.clinic_session_control1 WHERE sec_id = %s"
+            res = DataBaseHandle.getRecords(query, 1, (appointment_id,))
+            if not res:
+                return internal_response(False, "Cita no encontrada", None)
+            current_sessions = res['sec_ses_number'] or 0
+
+            # Incrementar el número de sesiones
+            update = """
+                    UPDATE ceragen.clinic_session_control1
+                    SET sec_ses_number = %s, status = 'scheduled', user_modified = %s, date_modified = NOW()
+                    WHERE sec_id = %s
+                """
+            new_sessions = current_sessions + 1
+            DataBaseHandle.ExecuteNonQuery(update, (new_sessions, user_process, appointment_id))
+            return internal_response(True, "Sesión registrada correctamente", new_sessions)
+        except Exception as err:
+            HandleLogs.write_error(err)
+            return internal_response(False, f"Error al registrar sesión: {str(err)}", None)

@@ -1,5 +1,5 @@
 # Rutas específicas para citas simplificadas que coinciden con las esperadas por el frontend
-
+from ..Services.Admin.AdminAppointmentService import AdminAppointmentService_register_session
 from ..Services.Admin.SimpleAppointmentService import (
     SimpleAppointmentServiceV2_get,
     SimpleAppointmentServiceV2_getbyid,
@@ -12,7 +12,7 @@ from ..Services.Admin.SimpleAppointmentService import (
     SimpleAppointmentServiceV2_by_therapist,
     SimpleAppointmentServiceV2_patients,
     SimpleAppointmentServiceV2_therapies,
-    SimpleAppointmentServiceV2_therapists
+    SimpleAppointmentServiceV2_therapists,
 )
 
 def load_simple_appointments_routes(api):
@@ -35,6 +35,7 @@ def load_simple_appointments_routes(api):
     
     # Ruta para actualizar cita (PUT /admin/simple-appointments/{id})
     api.add_resource(SimpleAppointmentServiceV2_update, '/admin/simple-appointments/<int:appointment_id>')
+    api.add_resource(AdminAppointmentService_register_session, '/admin/simple-appointments/register-session/<int:appointment_id>')
     
     # Ruta para cancelar cita (DELETE /admin/simple-appointments/{id})
     api.add_resource(SimpleAppointmentServiceV2_cancel, '/admin/simple-appointments/<int:appointment_id>')
