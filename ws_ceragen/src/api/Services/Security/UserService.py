@@ -249,7 +249,8 @@ class UserListId(Resource):
             # LLamar al metodo del componente
             resultado = UserComponent.ListUserId(user_name)
             if resultado['result']:
-                return response_success_personal(resultado['data'])
+                # 🔧 CORRECCIÓN: Cambiar response_success_personal por response_success
+                return response_success(resultado['data'])
             else:
                 return response_error(resultado['message'])
         except Exception as err:
