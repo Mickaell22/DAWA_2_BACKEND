@@ -12,6 +12,7 @@ from ..Services.Admin.AdminPatientMedicalHistoryService import (
 # Servicios de menu
 from ..Services.Security.MenuUserService import MenuUserService, MenuCurrentUserService
 from ..Services.Security.MenuRolAdditionalServices import MenuRolsByMenu, MenuRolsByRole, MenuRolBulkAssign
+from ..Services.Security.MultiRolService import MenuByRoleService, UserRolesService
 from ..Services.Security.UserSecurityService import UserMenuPermissions, ValidateMenuAccess
 
 
@@ -477,7 +478,8 @@ def load_routes(api):
     api.add_resource(MenuRolsByMenu, '/MenuRol/by-menu')
     api.add_resource(MenuRolsByRole, '/MenuRol/by-role')
     api.add_resource(MenuRolBulkAssign, '/MenuRol/bulk-assign')
-
+    api.add_resource(UserRolesService, '/security/user/roles')
+    api.add_resource(MenuByRoleService, '/security/menu/by-role/<int:rol_id>')
     # ===============================================================================
     # RUTAS DE SEGURIDAD - VALIDACIÓN DE PERMISOS
     # ===============================================================================
