@@ -393,30 +393,3 @@ class AdminAppointmentService_products(Resource):
         except Exception as err:
             HandleLogs.write_error(err)
             return response_error(str(err))
-
-class AdminAppointmentService_register_session(Resource):
-    @staticmethod
-    def patch(appointment_id):
-        """Registrar una sesión realizada (incrementar sec_ses_number)"""
-        try:
-            HandleLogs.write_log(f"Registrar sesión para cita ID: {appointment_id}")
-
-            token = request.headers.get('tokenapp')
-            if not token:
-                return response_error("Error: No se ha podido obtener el Token")
-            token_valido = TokenComponent.Token_Validate(token)
-            if not token_valido:
-                return response_unauthorize()
-
-            user_process = TokenComponent.User(token)
-
-            # Lógica: incrementar sec_ses_number y dejar status en 'scheduled' o 'pendiente'
-            from ...Components.Admin.AdminAppointmentComponent import AppointmentComponent
-            result = AppointmentComponent.register_session(appointment_id, user_process)
-            if result['result']:
-                return response_success(result['message'])
-            else:
-                return response_error(result['message'])
-        except Exception as err:
-            HandleLogs.write_error(err)
-            return response_error(str(err))

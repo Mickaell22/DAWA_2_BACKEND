@@ -262,7 +262,9 @@ from ..Services.Admin.SimpleAppointmentFrontendAdapter import (
     SimpleAppointmentFrontendSchedule,
     SimpleAppointmentFrontendExecute
 )
-
+from ..Services.Admin.SimpleAppointmentService import (
+    SimpleAppointmentServiceV2_register_session,
+)
 
 def load_routes(api):
     """
@@ -278,7 +280,8 @@ def load_routes(api):
     api.add_resource(AdminPatientService_update, '/admin/patients/update')
     api.add_resource(AdminPatientService_delete, '/admin/patients/delete/<int:pat_id>/<string:user>')
     api.add_resource(AdminPatientReportService, '/admin/patients/report')
-
+    api.add_resource(SimpleAppointmentServiceV2_register_session,
+                     '/admin/simple-appointments/register-session/<int:appointment_id>')
     # ===============================================================================
     # RUTAS DE ADMINISTRACIÓN - CLIENTES
     # ===============================================================================

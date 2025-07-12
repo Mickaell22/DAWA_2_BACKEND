@@ -764,3 +764,100 @@ class SimpleAppointmentServiceV2_therapists(Resource):
         except Exception as err:
             HandleLogs.write_error(f"Error en endpoint de terapeutas: {str(err)}")
             return response_error(f"Error interno: {str(err)}")
+
+class SimpleAppointmentServiceV2_register_session(Resource):
+    @staticmethod
+    def post(appointment_id):
+        print("[DEBUG] LLEGÓ LA PETICIÓN AL ENDPOINT DE REGISTRO DE SESIÓN (POST)")
+        """
+        Registrar una sesión ejecutada para una cita (marcar como ejecutada).
+        """
+        try:
+            print(f"[DEBUG] Iniciando registro de sesión para cita ID: {appointment_id}")
+            HandleLogs.write_log(f"📝 Registrar sesión para cita ID: {appointment_id}")
+
+            # Validar token
+            token = request.headers.get('tokenapp')
+            print(f"[DEBUG] Token recibido: {token}")
+            if not token:
+                print("[DEBUG] Token de autenticación requerido")
+                return response_error("Token de autenticación requerido")
+
+            token_valido = TokenComponent.Token_Validate(token)
+            print(f"[DEBUG] Token válido: {token_valido}")
+            if not token_valido:
+                print("[DEBUG] Token inválido o expirado")
+                return response_unauthorize()
+
+            # Validar ID
+            try:
+                appointment_id = int(appointment_id)
+                if appointment_id <= 0:
+                    print("[DEBUG] ID de cita inválido")
+                    return response_error("ID de cita inválido")
+            except (ValueError, TypeError):
+                print("[DEBUG] ID de cita debe ser un número válido")
+                return response_error("ID de cita debe ser un número válido")
+
+            # Verificar que la cita existe y se puede ejecutar
+            appointment = SimpleAppointmentComponent.get_appointment_by_id(appointment_id)
+            print(f"[DEBUG] Datos de la cita obtenidos: {appointment}")
+            if not appointment:
+                print("[DEBUG] Cita no encontrada")
+                return response_not_found("Cita no encontrada")
+
+            if appointment.get('status') != 'scheduled':
+                print(f"[DEBUG] Estado de la cita no permite registrar sesión: {appointment.get('status')}")
+                return response_error(
+                    f"No se puede registrar sesión para una cita con estado: {appointment.get('status')}")
+
+            if appointment.get('ses_consumed'):
+                print("[DEBUG] La sesión ya fue registrada como ejecutada")
+                return response_error("La sesión ya fue registrada como ejecutada")
+
+            # Obtener datos opcionales del request
+            try:
+                data = request.get_json(force=True, silent=True)
+                if not data:
+                    data = {}
+            except Exception as e:
+                print(f"[DEBUG] No se pudo decodificar JSON, usando dict vacío. Error: {e}")
+                data = {}
+            print(f"[DEBUG] Datos recibidos en el body: {data}")
+            execution_notes = data.get('execution_notes', 'Sesión registrada desde frontend')
+
+            # Obtener usuario del token
+            user_process = TokenComponent.User(token)
+            print(f"[DEBUG] Usuario que procesa: {user_process}")
+
+            # Registrar sesión (marcar como ejecutada)
+            result = SimpleAppointmentComponent.execute_session(
+                appointment_id,
+                user_process,
+                execution_notes
+            )
+            print(f"[DEBUG] Resultado de execute_session: {result}")
+
+            if result['result']:
+                HandleLogs.write_log(f"✅ Sesión registrada exitosamente")
+                print("[DEBUG] Sesión registrada exitosamente")
+                return response_success({
+                    'message': 'Sesión registrada exitosamente',
+                    'appointment_id': appointment_id,
+                    'patient_name': appointment.get('patient_name'),
+                    'execution_notes': execution_notes
+                })
+            else:
+                print(f"[DEBUG] Error al registrar sesión: {result['message']}")
+                return response_error(result['message'])
+
+        except Exception as err:
+            HandleLogs.write_error(f"Error registrando sesión: {str(err)}")
+            print(f"[DEBUG] Excepción en registro de sesión: {err}")
+            return response_error(f"Error interno: {str(err)}")
+
+    @staticmethod
+    def patch(appointment_id):
+        print("[DEBUG] LLEGÓ LA PETICIÓN AL ENDPOINT DE REGISTRO DE SESIÓN (PATCH)")
+        # Simplemente reutiliza la lógica de post
+        return SimpleAppointmentServiceV2_register_session.post(appointment_id)
