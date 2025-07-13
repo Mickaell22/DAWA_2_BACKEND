@@ -9,6 +9,13 @@ from ..Services.Admin.AdminPatientMedicalHistoryService import (
     AdminPatientMedicalHistoryService_delete
 )
 
+# Servicios de menu
+from ..Services.Security.MenuUserService import MenuUserService, MenuCurrentUserService
+from ..Services.Security.MenuRolAdditionalServices import MenuRolsByMenu, MenuRolsByRole, MenuRolBulkAssign
+from ..Services.Security.MultiRolService import MenuByRoleService, UserRolesService
+from ..Services.Security.UserSecurityService import UserMenuPermissions, ValidateMenuAccess
+
+
 # Servicios de Personas
 from ..Services.Admin.AdminPersonService import (
     AdminPersonService_get,
@@ -458,6 +465,27 @@ def load_routes(api):
     api.add_resource(LogoutService, '/security/logout')
     api.add_resource(RecoveringPassword, '/security/recover-password')
     api.add_resource(EmailPasswordUpdate, '/security/change-password')
+
+    # ===============================================================================
+    # RUTAS DE SEGURIDAD - MENÚS MULTIROL (NUEVAS)
+    # ===============================================================================
+    api.add_resource(MenuUserService, '/Menu/user/<int:user_id>')
+    api.add_resource(MenuCurrentUserService, '/Menu/my-menus')
+
+    # ===============================================================================
+    # RUTAS DE SEGURIDAD - MENÚ-ROL ADICIONALES
+    # ===============================================================================
+    api.add_resource(MenuRolsByMenu, '/MenuRol/by-menu')
+    api.add_resource(MenuRolsByRole, '/MenuRol/by-role')
+    api.add_resource(MenuRolBulkAssign, '/MenuRol/bulk-assign')
+    api.add_resource(UserRolesService, '/security/user/roles')
+    api.add_resource(MenuByRoleService, '/security/menu/by-role/<int:rol_id>')
+    # ===============================================================================
+    # RUTAS DE SEGURIDAD - VALIDACIÓN DE PERMISOS
+    # ===============================================================================
+    api.add_resource(UserMenuPermissions, '/security/user-permissions')
+    api.add_resource(ValidateMenuAccess, '/security/validate-menu-access')
+
 
     # ===============================================================================
     # RUTAS DE SEGURIDAD - USUARIOS
