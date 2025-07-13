@@ -47,10 +47,10 @@ class Invoice_Payment_Component:
                 "user_deleted, to_char(date_deleted, 'DD/MM/YYYY HH24:MI:SS') as date_deleted "
                 "FROM ceragen.admin_invoice_payment WHERE inp_state = true"
             )
-            records = DataBaseHandle.getRecords(query, 0)
-            if records:
-                records = _convert_decimals_to_floats(records)
-            return records
+            result = DataBaseHandle.getRecords(query, 0)
+            if result and result.get("data"):
+                result["data"] = _convert_decimals_to_floats(result["data"])
+            return result
         except Exception as err:
             HandleLogs.write_error(err)
             return None

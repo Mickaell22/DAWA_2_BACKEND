@@ -18,7 +18,7 @@ class admin_Invoice_payment_service_get(Resource):
                 return response_error("Error: No se ha podido obtener el token")
             if not TokenComponent.Token_Validate(token):
                 return response_unauthorize()
-            res = Invoice_Payment_Component.ListAllInvoicesPayments()
+            res = Invoice_Payment_Component.ListAllInvoicesPaymentsByStateTrue()
             if res:
                 return response_success(res)
             else:
@@ -27,6 +27,7 @@ class admin_Invoice_payment_service_get(Resource):
             HandleLogs.write_error(err)
             return response_error(str(err))
 
+#Todos los pagos sumados
 class admin_Invoice_payment_total_income(Resource):
     @staticmethod
     def get():
