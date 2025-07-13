@@ -304,9 +304,9 @@ class SimpleAppointmentServiceV2_update(Resource):
 class SimpleAppointmentServiceV2_cancel(Resource):
     @staticmethod
     def delete(appointment_id):
-        """Cancelar cita con validaciones"""
+        """Eliminar cita con validaciones"""
         try:
-            HandleLogs.write_log(f"❌ Cancelar cita ID: {appointment_id}")
+            HandleLogs.write_log(f"❌ Eliminar cita ID: {appointment_id}")
 
             # Validar token
             token = request.headers.get('tokenapp')
@@ -325,24 +325,21 @@ class SimpleAppointmentServiceV2_cancel(Resource):
             except (ValueError, TypeError):
                 return response_error("ID de cita debe ser un número válido")
 
-            # Verificar que la cita existe y se puede cancelar
+            # Verificar que la cita existe
             appointment = SimpleAppointmentComponent.get_appointment_by_id(appointment_id)
             if not appointment:
                 return response_not_found("Cita no encontrada")
 
-            if appointment.get('status') == 'cancelled':
-                return response_error("La cita ya está cancelada")
-
             # Obtener usuario del token
             user_process = TokenComponent.User(token)
 
-            # Cancelar cita
+            # Eliminar cita (físico)
             result = SimpleAppointmentComponent.cancel_appointment(appointment_id, user_process)
 
             if result['result']:
-                HandleLogs.write_log(f"✅ Cita cancelada exitosamente")
+                HandleLogs.write_log(f"✅ Cita eliminada exitosamente")
                 return response_success({
-                    'message': 'Cita cancelada exitosamente',
+                    'message': 'Cita eliminada exitosamente',
                     'appointment_id': appointment_id,
                     'patient_name': appointment.get('patient_name')
                 })
@@ -350,7 +347,7 @@ class SimpleAppointmentServiceV2_cancel(Resource):
                 return response_error(result['message'])
 
         except Exception as err:
-            HandleLogs.write_error(f"Error cancelando cita: {str(err)}")
+            HandleLogs.write_error(f"Error eliminando cita: {str(err)}")
             return response_error(f"Error interno: {str(err)}")
 
 

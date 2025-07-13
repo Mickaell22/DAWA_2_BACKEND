@@ -239,35 +239,40 @@ class SimpleAppointmentComponent:
 
     @staticmethod
     def cancel_appointment(appointment_id, user_process):
-        """Cancelar cita (eliminación lógica)"""
+        """Eliminar cita físicamente (borrado real)"""
         try:
-            print(f"[DEBUG] cancel_appointment called with appointment_id={appointment_id}, user_process={user_process}")
-            HandleLogs.write_log(f"[DEBUG] cancel_appointment called with appointment_id={appointment_id}, user_process={user_process}")
+            print(
+                f"[DEBUG] cancel_appointment called with appointment_id={appointment_id}, user_process={user_process}")
+            HandleLogs.write_log(
+                f"[DEBUG] cancel_appointment called with appointment_id={appointment_id}, user_process={user_process}")
 
             sql = """
-                UPDATE ceragen.clinic_session_control1 
-                SET ses_state = false,
-                    status = 'cancelled',
-                    user_deleted = %s,
-                    date_deleted = %s
-                WHERE sec_id = %s AND ses_state = true
+                DELETE FROM ceragen.clinic_session_control1
+                WHERE sec_id = %s
             """
 
-            record = (user_process, datetime.now(), appointment_id)
-            print(f"[DEBUG] Ejecutando update: {sql} con record: {record}")
+            record = (appointment_id,)
+            print(f"[DEBUG] Ejecutando delete: {sql} con record: {record}")
             result = DataBaseHandle.ExecuteNonQuery(sql, record)
+            print(f"[DEBUG] Result from ExecuteNonQuery: {result}")
 
-            if result > 0:
-                print("[DEBUG] Cita cancelada exitosamente.")
-                return internal_response(True, "Cita cancelada exitosamente", result)
+            affected_rows = 0
+            if isinstance(result, dict):
+                affected_rows = result.get('rowcount') or result.get('data') or 0
+            elif isinstance(result, int):
+                affected_rows = result
+
+            if affected_rows > 0:
+                print("[DEBUG] Cita eliminada exitosamente.")
+                return internal_response(True, "Cita eliminada exitosamente", affected_rows)
             else:
-                print("[DEBUG] No se pudo cancelar la cita.")
-                return internal_response(False, "No se pudo cancelar la cita", None)
+                print("[DEBUG] No se pudo eliminar la cita.")
+                return internal_response(False, "No se pudo eliminar la cita", None)
 
         except Exception as err:
             print(f"[ERROR] cancel_appointment: {err}")
             HandleLogs.write_error(err)
-            return internal_response(False, f"Error al cancelar cita: {str(err)}", None)
+            return internal_response(False, f"Error al eliminar cita: {str(err)}", None)
 
     @staticmethod
     def execute_session(appointment_id, user_process, execution_notes=None):
