@@ -57,7 +57,8 @@ from ..Services.Admin.AdminMedicalStaffService import (
     admin_Medical_staff_getbyid,
     admin_Medical_staff_service_add,
     admin_Medical_staff_service_Update,
-    admin_Medical_staff_service_Delete
+    admin_Medical_staff_service_Delete,
+    admin_MedicalStaffFullListService  # <-- Nombre correcto de la clase nueva
 )
 
 # Servicios de Tipo de Persona Médica
@@ -384,6 +385,7 @@ def load_routes(api):
     api.add_resource(admin_Medical_staff_service_add, '/admin/MedicalStaff/add')
     api.add_resource(admin_Medical_staff_service_Update, '/admin/MedicalStaff/update')
     api.add_resource(admin_Medical_staff_service_Delete, '/admin/MedicalStaff/delete/<int:id>/<string:user>')
+    api.add_resource(admin_MedicalStaffFullListService, '/admin/MedicalStaff/fullList')
 
     # ===============================================================================
     # RUTAS DE ADMINISTRACIÓN - TIPO DE PERSONA MÉDICA

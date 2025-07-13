@@ -113,3 +113,29 @@ class Medical_staff_Component:
         except Exception as err:
             HandleLogs.write_error(err)
             return False, f"Error inesperado: {str(err)}"
+#CITA FRONT DATOS
+    @staticmethod
+    def list_full_medical_staff():
+        try:
+            query = """
+                    SELECT
+                        ams.med_id,
+                        ams.med_person_id,
+                        ams.med_type_id,
+                        ams.med_registration_number,
+                        ams.med_specialty,
+                        ams.med_state,
+                        per.per_names,
+                        per.per_surnames,
+                        pergen.genre_name as per_genre,
+                        mastatus.status_name as marital_status
+                    FROM ceragen.admin_medical_staff ams
+                    INNER JOIN ceragen.admin_person per ON ams.med_person_id = per.per_id
+                    LEFT JOIN ceragen.admin_person_genre pergen ON per.per_genre_id = pergen.id
+                    LEFT JOIN ceragen.admin_marital_status mastatus ON per.per_marital_status_id = mastatus.id
+                    WHERE ams.med_state = TRUE AND per.per_state = TRUE
+                """
+            return DataBaseHandle.getRecords(query, 0)
+        except Exception as err:
+            HandleLogs.write_error(err)
+            return None

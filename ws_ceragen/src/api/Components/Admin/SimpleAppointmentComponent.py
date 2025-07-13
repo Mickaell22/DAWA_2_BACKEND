@@ -416,10 +416,18 @@ class SimpleAppointmentComponent:
 
             print(f"[DEBUG] Ejecutando update: {sql} con values: {tuple(values)}")
             result = DataBaseHandle.ExecuteNonQuery(sql, tuple(values))
+            print(f"[DEBUG] Result from ExecuteNonQuery: {result}")
 
-            if result > 0:
+            affected_rows = 0
+            if isinstance(result, dict):
+                # Extraer el número de filas afectadas según tu estructura real
+                affected_rows = result.get('rowcount') or result.get('data') or 0
+            elif isinstance(result, int):
+                affected_rows = result
+
+            if affected_rows > 0:
                 print("[DEBUG] Cita actualizada exitosamente.")
-                return internal_response(True, "Cita actualizada exitosamente", result)
+                return internal_response(True, "Cita actualizada exitosamente", affected_rows)
             else:
                 print("[DEBUG] No se pudo actualizar la cita.")
                 return internal_response(False, "No se pudo actualizar la cita", None)
