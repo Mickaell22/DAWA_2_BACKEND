@@ -64,7 +64,7 @@ if __name__ == '__main__':
             exit(1)
 
         HandleLogs.write_log("Arrancando servidor Flask...")
-        port = int(os.environ.get('PORT', 5000))
+        port = int(os.environ.get('PORT', 8000))
         app.run(debug=True, host='0.0.0.0', port=port, threaded=True)
     except Exception as err:
         HandleLogs.write_error(err)

@@ -1,4 +1,4 @@
-# 🐍 Backend Flask Dockerfile - Corregido para wait-for-db.sh
+# 🐍 Backend Flask Dockerfile - Puerto 8000
 FROM python:3.12-slim
 
 WORKDIR /app
@@ -9,6 +9,7 @@ RUN apt-get update && apt-get install -y \
     libpq-dev \
     postgresql-client \
     curl \
+    wget \
     && rm -rf /var/lib/apt/lists/*
 
 # Copiar requirements.txt desde la ubicación correcta
@@ -37,22 +38,23 @@ RUN echo '#!/bin/bash' > /usr/local/bin/wait-for-db.sh && \
 # Copiar código fuente
 COPY . /app/
 
-# Variables de entorno
+# Variables de entorno para puerto 8000
 ENV PYTHONPATH=/app
 ENV FLASK_ENV=development
+ENV FLASK_DEBUG=1
 ENV PYTHONUNBUFFERED=1
 ENV FLASK_RUN_HOST=0.0.0.0
-ENV FLASK_RUN_PORT=5000
+ENV FLASK_RUN_PORT=8000
 
 # Crear directorio de logs
 RUN mkdir -p /app/LOGS
 
-# Exponer puerto
-EXPOSE 5000
+# Exponer puerto 8000
+EXPOSE 8000
 
-# Health check
+# Health check en puerto 8000
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-  CMD curl -f http://localhost:5000/health || exit 1
+  CMD curl -f http://localhost:8000/health || exit 1
 
 # Comando usando script creado directamente en el contenedor
 CMD ["/usr/local/bin/wait-for-db.sh", "postgres-db", "5432", "--", "python", "app.py"]
