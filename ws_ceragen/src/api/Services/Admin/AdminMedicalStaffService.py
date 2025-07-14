@@ -141,3 +141,24 @@ class admin_Medical_staff_service_Delete(Resource):
         except Exception as err:
             HandleLogs.write_error(err)
             return response_error(err.__str__())
+# # Listado completo del Personal Médico (Frontend) CITA
+class admin_MedicalStaffFullListService(Resource):
+    @staticmethod
+    def get():
+        try:
+            HandleLogs.write_log("Listado completo de personal médico con datos de persona")
+            token = request.headers.get('tokenapp')
+            if token is None:
+                return response_error("Error: No se ha podido Obtener el Token")
+            if not TokenComponent.Token_Validate(token):
+                return response_unauthorize()
+
+            # Llamas al component aquí:
+            result = Medical_staff_Component.list_full_medical_staff()
+            if result:
+                return response_success(result)
+            else:
+                return response_not_found()
+        except Exception as err:
+            HandleLogs.write_error(err)
+            return response_error(err.__str__())

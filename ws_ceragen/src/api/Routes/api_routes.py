@@ -58,7 +58,8 @@ from ..Services.Admin.AdminMedicalStaffService import (
     admin_Medical_staff_getbyid,
     admin_Medical_staff_service_add,
     admin_Medical_staff_service_Update,
-    admin_Medical_staff_service_Delete
+    admin_Medical_staff_service_Delete,
+    admin_MedicalStaffFullListService  # <-- Nombre correcto de la clase nueva
 )
 
 # Servicios de Tipo de Persona Médica
@@ -263,7 +264,9 @@ from ..Services.Admin.SimpleAppointmentFrontendAdapter import (
     SimpleAppointmentFrontendSchedule,
     SimpleAppointmentFrontendExecute
 )
-
+from ..Services.Admin.SimpleAppointmentService import (
+    SimpleAppointmentServiceV2_register_session,
+)
 
 def load_routes(api):
     """
@@ -279,7 +282,8 @@ def load_routes(api):
     api.add_resource(AdminPatientService_update, '/admin/patients/update')
     api.add_resource(AdminPatientService_delete, '/admin/patients/delete/<int:pat_id>/<string:user>')
     api.add_resource(AdminPatientReportService, '/admin/patients/report')
-
+    api.add_resource(SimpleAppointmentServiceV2_register_session,
+                     '/admin/simple-appointments/register-session/<int:appointment_id>')
     # ===============================================================================
     # RUTAS DE ADMINISTRACIÓN - CLIENTES
     # ===============================================================================
@@ -382,6 +386,7 @@ def load_routes(api):
     api.add_resource(admin_Medical_staff_service_add, '/admin/MedicalStaff/add')
     api.add_resource(admin_Medical_staff_service_Update, '/admin/MedicalStaff/update')
     api.add_resource(admin_Medical_staff_service_Delete, '/admin/MedicalStaff/delete/<int:id>/<string:user>')
+    api.add_resource(admin_MedicalStaffFullListService, '/admin/MedicalStaff/fullList')
 
     # ===============================================================================
     # RUTAS DE ADMINISTRACIÓN - TIPO DE PERSONA MÉDICA

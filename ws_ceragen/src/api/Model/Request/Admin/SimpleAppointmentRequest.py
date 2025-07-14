@@ -12,7 +12,7 @@ class SimpleAppointmentScheduleRequest(Schema):
         error_messages={'required': 'El nombre del paciente es obligatorio'}
     )
     sec_ses_agend_date = fields.Str(
-        required=True,
+        required=False, allow_none=True,
         error_messages={'required': 'La fecha y hora de la cita es obligatoria'}
     )
 
